@@ -43,6 +43,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
+        for family in UIFont.familyNames {
+            print(family)
+            for font in UIFont.fontNames(forFamilyName: family) {
+                print("   \(font)")
+            }
+        }
     }
     
     // MARK: UISceneSession Lifecycle

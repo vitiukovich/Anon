@@ -79,10 +79,18 @@ class CustomButton: UIButton {
         self.titleLabel?.font = .systemFont(ofSize: 24, weight: .medium)
         self.translatesAutoresizingMaskIntoConstraints = false
         
-        if user.profileImage != "" {
-            self.setImage(UIImage(named: user.profileImage), for: .normal)
+        if let profileImage = UIImage(named: user.profileImage), !user.profileImage.isEmpty {
+            self.setImage(profileImage, for: .normal)
+            self.setTitle(nil, for: .normal)
+            
+            self.imageView?.isHidden = false
+            self.titleLabel?.isHidden = true
         } else {
+            self.setImage(nil, for: .normal)
             self.setTitle(user.username.first?.uppercased(), for: .normal)
+            
+            self.imageView?.isHidden = true
+            self.titleLabel?.isHidden = false
         }
         
         NSLayoutConstraint.activate([

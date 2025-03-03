@@ -49,6 +49,7 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.view.layoutSubviews()
         viewModel.fetchLocalContacts()
         viewModel.fetchLocalChats()
     }

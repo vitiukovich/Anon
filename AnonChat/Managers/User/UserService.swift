@@ -87,6 +87,7 @@ final class UserService {
         }
         if let profileImage = profileImage {
             updatedData["profileImage"] = profileImage
+            UserDefaults.standard.set(profileImage, forKey: "profileImage")
         }
         if let fcmToken = fcmToken {
             updatedData["fcmToken"] = fcmToken
@@ -123,7 +124,7 @@ final class UserService {
     
     func updateFCMToken() {
         Messaging.messaging().token { token, error in
-            if let error = error {
+            if error != nil {
                 return
             }
             

@@ -23,11 +23,6 @@ final class ProfileImagePickerViewModel {
     private let currentUser = UserManager.shared.currentUser
     
     func updateImage(index: Int) {
-        UserManager.shared.updateCurrentUserData(profileImage: imageData[index]) { result in
-            switch result {
-            case .failure(let error): break
-            case .success(): break
-            }
-        }
+        UserManager.shared.updateCurrentUserData(profileImage: imageData[index]) { _ in  }
     }
 }
