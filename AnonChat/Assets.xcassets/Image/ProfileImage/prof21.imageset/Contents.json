@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "Leonardo_Anime_XL_Chic_fashion_illustration_of_a_woman_in_a_lo_2@1x.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Leonardo_Anime_XL_Chic_fashion_illustration_of_a_woman_in_a_lo_2@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Leonardo_Anime_XL_Chic_fashion_illustration_of_a_woman_in_a_lo_2@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
