@@ -15,8 +15,21 @@ final class LocalChatService {
     
     static let shared = LocalChatService()  
 
-    private init() {}
+    private init() {
+        startAutoDeleteTimer()
+    }
 
+    func startAutoDeleteTimer() {
+        Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            let realm = try! Realm()
+            let allChats = realm.objects(Chat.self)
+
+            for chat in allChats {
+                self.deleteExpiredMessages(for: chat)
+            }
+        }
+    }
+    
     func loadAllChats(for userID: String) -> [Chat] {
         let realm = try! Realm()
         return Array(realm.objects(Chat.self).filter("currentUID == %@", userID))
@@ -89,6 +102,7 @@ final class LocalChatService {
             chat.messages.append(objectsIn: chatDTO.messages.map { $0.toMessage() })
         }
     }
+    
     func deleteAllChats() throws {
         let realm = try! Realm()
 
@@ -98,6 +112,49 @@ final class LocalChatService {
             
             realm.delete(allMessages)
             realm.delete(allChats)
+        }
+    }
+    
+    func updateDeleteTimer(for contactID: String, deleteTime: Int) throws {
+        guard let currentUID = UserManager.shared.currentUID else {
+            throw NSError(domain: "LocalChatService", code: 404, userInfo: [NSLocalizedDescriptionKey: "UserID unavailable"]) }
+        
+        let realm = try Realm()
+        
+        guard let chat = realm.object(ofType: Chat.self, forPrimaryKey: "\(currentUID)_\(contactID)") else {
+            throw NSError(domain: "LocalChatService", code: 404, userInfo: [NSLocalizedDescriptionKey: "Chat's not found"])
+        }
+        
+        try realm.write {
+            chat.deleteTimer = deleteTime
+        }
+        
+        NotificationCenter.default.post(name: .newAutoDeleteTime, object: nil, userInfo: ["deleteTime": deleteTime])
+    }
+    
+    func deleteExpiredMessages(for chat: Chat) {
+        let realm = try! Realm()
+        let now = Date()
+
+        guard let deleteInterval = chat.deleteTimer else { return }
+
+        let expirationTime: TimeInterval?
+        switch deleteInterval {
+        case 0: expirationTime = nil
+        case 1: expirationTime = 3600
+        case 2: expirationTime = 86400
+        case 3: expirationTime = 604800
+        default: expirationTime = nil
+        }
+
+        guard let timeInterval = expirationTime else { return }
+
+        let expiredMessages = chat.messages.filter { message in
+            return message.date.addingTimeInterval(timeInterval) <= now
+        }
+
+        try? realm.write {
+            realm.delete(expiredMessages)
         }
     }
 }

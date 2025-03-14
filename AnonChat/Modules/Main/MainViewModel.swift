@@ -9,15 +9,17 @@ import UIKit
 import Combine
 
 class MainViewModel {
-    @Published var localContacts: [ContactDTO] = []
     @Published var networkContacts: [ContactDTO] = []
-    @Published var chats: [ChatDTO] = []
     @Published var isSearching: Bool = false
     @Published var isNewMassage: Bool = false
     @Published var query: String = ""
     @Published var profileImage: String = ""
     @Published var newMessage: MessageDTO? = nil
     
+    
+    var parentVC: MainViewController?
+    
+    private var localContacts: [ContactDTO] = []
     private let coordinator: MainCoordinator
     private let contactManager = ContactManager.shared
     private let chatManager = ChatManager.shared
@@ -35,14 +37,18 @@ class MainViewModel {
         fetchLocalChats()
         bindUserProfileImage()
     }
-    
-    
 
     private func bindMessagesNotification() {
+        NotificationCenter.default.addObserver(forName: .newMessageSaved, object: nil, queue: .main) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.fetchLocalChats()
+            }
+        }
+        
         NotificationCenter.default.addObserver(forName: .newMessageReceived,
-                                               object: nil, queue: .main)
-        { [weak self] notification in
+                                               object: nil, queue: .main) { [weak self] notification in
             guard let self = self else { return }
+
             DispatchQueue.main.async {
                 guard let message = notification.userInfo?["message"] as? MessageDTO else {
                     return
@@ -78,11 +84,21 @@ class MainViewModel {
     }
     
     func fetchLocalChats() {
-        chats = chatManager.loadAllChats(for: currentUID).sorted(by: { $0.lastMessageDate > $1.lastMessageDate })
+        let updatedChats = chatManager.loadAllChats(for: currentUID)
+            .sorted(by: { $0.lastMessageDate > $1.lastMessageDate })
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, let tableView = self.parentVC?.chatsTableView else { return }
+            tableView.updateChats(updatedChats)
+        }
     }
     
     func fetchLocalContacts() {
         localContacts = contactManager.fetchLocalContacts().sorted { $0.username < $1.username }
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.parentVC?.contactsTableView.updateContacts(network: [], local: self.localContacts, isSearching: false)
+        }
     }
     
     func searchContacts(query: String) {
@@ -99,11 +115,7 @@ class MainViewModel {
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let contacts):
-                        var sortedNetworkContacts = contacts.sorted { $0.username < $1.username }
-                        sortedNetworkContacts.removeAll { $0.userID == self.currentUID }
-                        self.networkContacts = sortedNetworkContacts.filter { contact in
-                            !self.localContacts.contains(where: { $0.userID == contact.userID })
-                        }
+                        self.parentVC?.contactsTableView.updateContacts(network: contacts, local: sortedLocalContacts, isSearching: true)
                     case .failure(_):
                         break
                     }

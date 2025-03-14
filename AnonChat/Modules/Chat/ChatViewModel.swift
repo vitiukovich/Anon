@@ -15,6 +15,7 @@ final class ChatViewModel {
     lazy var isContactAvailable: Bool = contact.status == "Available" ? true : false
     @Published var messages: [MessageDTO] = []
     @Published var errorMessage: String? = nil
+    @Published var autoDeleteOption: AutoDeleteView.Option = .off
     
     private let contact: ContactDTO
     private var cancellables = Set<AnyCancellable>()
@@ -28,17 +29,26 @@ final class ChatViewModel {
         self.chat = chat
         self.chat.markAsRead()
         self.chatDTO = chat.toDTO()
+        switch chat.deleteTimer {
+        case 0, nil: autoDeleteOption = .off
+        case 1: autoDeleteOption = .oneHour
+        case 2: autoDeleteOption = .oneDay
+        case 3: autoDeleteOption = .oneWeek
+        default: break
+        }
         fetchMessages()
         observeMessages()
+        bindNotifications()
     }
     
     deinit {
         messagesToken?.invalidate()
         messagesToken = nil
         cancellables.removeAll()
+        NotificationCenter.default.removeObserver(self, name: .newAutoDeleteTime, object: nil)
     }
     
-    func fetchMessages() {
+    func fetchMessages() { 
         let messages = Array(chat.messages).sorted { $0.date > $1.date }
         self.messages = messages.map { $0.toDTO() }
     }
@@ -46,6 +56,10 @@ final class ChatViewModel {
     func cancelObservingMessages() {
         messagesToken?.invalidate()
         messagesToken = nil
+    }
+    
+    func bindNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAutoDeleteTime(_:)), name: .newAutoDeleteTime, object: nil)
     }
     
     func observeMessages() {
@@ -77,6 +91,19 @@ final class ChatViewModel {
                 self.errorMessage = error.localizedDescription
                 completion(.failure(error))
             }
+        }
+    }
+    
+    @objc private func handleAutoDeleteTime(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let deleteTime = userInfo["deleteTime"] as? Int else { return }
+        
+        switch deleteTime {
+        case 0: autoDeleteOption = .off
+        case 1: autoDeleteOption = .oneHour
+        case 2: autoDeleteOption = .oneDay
+        case 3: autoDeleteOption = .oneWeek
+        default: break
         }
     }
 }

@@ -49,6 +49,7 @@ final class LoginViewModel {
     
     func toggleRememberMe() {
         isRememberMeSelected.toggle()
+        UserDefaults.standard.setValue(isRememberMeSelected, forKey: "isRememberMeSelected")
     }
 }
 

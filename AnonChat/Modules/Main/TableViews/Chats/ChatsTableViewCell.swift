@@ -14,17 +14,10 @@ class ChatsTableViewCell: UITableViewCell {
     let lastMessage = UILabel()
     let unreadIndicator = UIView()
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        profileImage.imageView.image = nil
-        username.text = nil
-        lastMessage.text = nil
-    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

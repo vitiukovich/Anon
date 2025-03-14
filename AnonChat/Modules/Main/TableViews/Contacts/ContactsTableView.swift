@@ -7,23 +7,21 @@
 
 import UIKit
 
-class ContactsTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
-    var localContacts: [ContactDTO] = [] {
-        didSet {
-            self.reloadData()
-        }
+class ContactsTableView: UITableView, UITableViewDelegate {
+    
+    enum Section: CaseIterable {
+        case savedContacts
+        case searchResults
     }
-    var networkContacts: [ContactDTO] = [] {
-        didSet {
-            self.reloadData()
-        }
-    }
+
+    var diffableDataSource: UITableViewDiffableDataSource<Section, ContactDTO>!
+    
     weak var parentVC: MainViewController?
     private let backgroundTableView = BackgroundView()
     
     
     func configure() {
-        self.dataSource = self
+
         self.delegate = self
         
         self.translatesAutoresizingMaskIntoConstraints = false
@@ -34,43 +32,44 @@ class ContactsTableView: UITableView, UITableViewDataSource, UITableViewDelegate
         self.sectionHeaderTopPadding = 0
         
         backgroundTableView.configure(frame: self.bounds)
-        self.updateEmpty(isSearching: false)
         self.register(ContactsTableViewCell.self, forCellReuseIdentifier: "ContactsCell")
-    }
-    
-
-    func updateEmpty(isSearching: Bool) {
-        backgroundTableView.label.text = isSearching ? "Oops, We Can’t Find the Results" : "You don’t have any contacts yet"
-        self.backgroundView = localContacts.isEmpty && networkContacts.isEmpty ? backgroundTableView : nil
-    }
-    
-    
-    //MARK: DataSource
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0: return localContacts.count
-        case 1: return networkContacts.count
-        default: return 0
+        
+        diffableDataSource = UITableViewDiffableDataSource<Section, ContactDTO>(tableView: self) { tableView, indexPath, contact in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ContactsCell", for: indexPath) as! ContactsTableViewCell
+            
+            cell.username.text = contact.username
+            cell.status.text = contact.status
+            let firstLetter = contact.username.first?.uppercased() ?? ""
+            cell.profileImage.setImageWithLabel(imageName: contact.profileImage, text: firstLetter)
+            
+            return cell
         }
+        
+        self.dataSource = diffableDataSource
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ContactsCell", for: indexPath) as! ContactsTableViewCell
-        let contact = (indexPath.section == 0) ? localContacts[indexPath.row] : networkContacts[indexPath.row]
+    func updateContacts(network: [ContactDTO], local: [ContactDTO], isSearching: Bool) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, ContactDTO>()
+        
+        if !local.isEmpty {
+            snapshot.appendSections([.savedContacts])
+            snapshot.appendItems(local, toSection: .savedContacts)
+        }
+        
+        if !network.isEmpty {
+            snapshot.appendSections([.searchResults])
+            snapshot.appendItems(network, toSection: .searchResults)
+        }
+        
+        diffableDataSource.apply(snapshot, animatingDifferences: true)
 
-        cell.username.text = contact.username
-        cell.status.text = contact.status
-        let firstLetter = contact.username.first?.uppercased() ?? ""
-        cell.profileImage.setImageWithLabel(imageName: contact.profileImage, text: firstLetter)
-
-        return cell
+        backgroundTableView.label.text = isSearching ? "Oops, We Can’t Find the Results" : "You don’t have any contacts yet"
+        self.backgroundView = local.isEmpty && network.isEmpty ? backgroundTableView : nil
+        
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard diffableDataSource.sectionIdentifier(for: section) != nil else { return nil }
         
         let headerView = UIView()
         headerView.backgroundColor = .secondBackground
@@ -92,17 +91,14 @@ class ContactsTableView: UITableView, UITableViewDataSource, UITableViewDelegate
     
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        switch section {
-        case 0: return localContacts.isEmpty ? 0 : 44
-        case 1: return networkContacts.isEmpty ? 0 : 44
-        default: return 0
-        }
+        guard let sectionType = diffableDataSource.sectionIdentifier(for: section) else { return 0 }
+        return diffableDataSource.snapshot().itemIdentifiers(inSection: sectionType).isEmpty ? 0 : 44
     }
     
     //MARK: Delegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let contact = (indexPath.section == 0) ? localContacts[indexPath.row] : networkContacts[indexPath.row]
+        guard let contact = diffableDataSource.itemIdentifier(for: indexPath) else { return }
         parentVC?.coordinator.showProfile(for: contact)
         tableView.deselectRow(at: indexPath, animated: true)
     }

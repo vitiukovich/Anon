@@ -16,14 +16,15 @@ final class Message: Object {
     @Persisted var text: String? = nil
     @Persisted var date: Date = Date()
     @Persisted var imageData: Data? = nil
-    @Persisted var deleteDate: Date? = nil
+    @Persisted var deleteDate: Int? = nil
     
     convenience init(senderID: String,
                      recipientID: String,
                      text: String? = nil,
                      image: UIImage? = nil,
                      file: Data? = nil,
-                     fileName: String? = nil) {
+                     fileName: String? = nil,
+                     deleteDate: Int? = nil) {
         
         self.init()
         self.id = generateUniqueID()
@@ -43,7 +44,7 @@ final class Message: Object {
                      text: String?,
                      date: Date,
                      imageData: Data?,
-                     deleteDate: Date?) {
+                     deleteDate: Int?) {
         self.init()
         self.id = id
         self.senderID = senderID
@@ -79,14 +80,14 @@ final class Message: Object {
 }
             
 
-struct MessageDTO {
+struct MessageDTO: Hashable {
     let id: String
     let senderID: String
     let recipientID: String
     let text: String?
     let date: Date
     let imageData: Data?
-    let deleteDate: Date?
+    let deleteDate: Int?
     
     init(id: String,
          senderID: String,
@@ -94,7 +95,7 @@ struct MessageDTO {
          text: String?,
          date: Date,
          imageData: Data?,
-         deleteDate: Date?) {
+         deleteDate: Int?) {
         self.id = id
         self.senderID = senderID
         self.recipientID = recipientID
@@ -102,6 +103,14 @@ struct MessageDTO {
         self.date = date
         self.imageData = imageData
         self.deleteDate = deleteDate
+    }
+    
+    static func == (lhs: MessageDTO, rhs: MessageDTO) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     
     func toMessage() -> Message {

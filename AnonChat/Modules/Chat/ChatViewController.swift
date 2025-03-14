@@ -48,6 +48,8 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         setupUI()
         bindViewModel()
         addKeyboardObservers()
+        guard let viewModel else { return }
+        tableView.updateMessages(viewModel.messages)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -77,7 +79,7 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         backButton.setCircleButton(height: 40, imageName: "arrow.left")
         username.setDefault(text: contact.username, ofSize: 18, weight: .semibold, color: .mainText)
         profileButton.setProfileButton(forUser: contact, height: 40)
-        callButton.setCircleButton(height: 40, imageName: "phone")
+        callButton.setCircleButton(height: 40, imageName: "clock")
         tableView.parentView = self
         tableView.configure()
         
@@ -140,15 +142,24 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         
         textView.isRightButtonActive = viewModel.isContactAvailable
         
+        viewModel.$autoDeleteOption
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] value in
+                guard let self = self else { return }
+                ErrorView().show(in: subview, duration: 5, message: "Auto-Delete: \(value.rawValue)")
+                self.tableView.reloadData()
+            }
+            .store(in: &cancellables)
+        
         if !viewModel.isContactAvailable {
-            ErrorView().show(in: subview, duration: 20,  message: "Contact not available")
+            ErrorView().show(in: subview, duration: 10,  message: "Contact not available")
         }
         
         viewModel.$messages
             .receive(on: DispatchQueue.main)
             .sink { [weak self] messages in
                 guard let self = self else { return }
-                self.tableView.data = messages
+                self.tableView.updateMessages(messages)
                 self.tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -174,7 +185,7 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         
         callButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            coordinator.call(vc: self)
+            coordinator.showAutoDelete(vc: self, option: viewModel.autoDeleteOption, contactID: contact.userID)
         }, for: .touchUpInside)
         
         textView.rightButton.addAction(UIAction { [weak self] _ in

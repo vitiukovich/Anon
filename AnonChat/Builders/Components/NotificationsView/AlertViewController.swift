@@ -124,11 +124,11 @@ class AlertViewController: UIViewController {
         let button = CustomButton()
         button.setDefaultButton(withTitle: withTitle, height: 50)
         button.backgroundColor = color
-        if let action = action {
+        if let action = action { 
             button.addAction(action, for: .touchUpInside)
         }
-        button.addAction(UIAction { _ in
-            self.dismiss()
+        button.addAction(UIAction { [weak self] _ in
+            self?.dismiss()
         }, for: .touchUpInside)
         
         stackView.addArrangedSubview(button)
@@ -159,6 +159,5 @@ class AlertViewController: UIViewController {
     @objc private func handleBackgroundTap() {
         dismiss()
     }
-    
     
 }

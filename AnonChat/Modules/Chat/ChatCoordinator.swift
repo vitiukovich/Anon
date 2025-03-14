@@ -40,9 +40,9 @@ final class ChatCoordinator {
         coordinator.start(withChat: chat)
     }
     
-    func call(vc: ChatViewController) {
-        let alert = AlertViewController(title: "Call isn't available", message: "You can't call to any users now. This option will available in future")
-        alert.addButton(withTitle: "OK")
+    func showAutoDelete(vc: ChatViewController, option: AutoDeleteView.Option, contactID: String) {
+        let alert = AutoDeleteView(selectedOption: option)
+        alert.sendAction(to: contactID)
         alert.show(fromVC: vc)
     }
 

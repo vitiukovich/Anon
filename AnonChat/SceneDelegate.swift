@@ -21,10 +21,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         
         if let uid = Auth.auth().currentUser?.uid,
-            uid == UserManager.shared.currentUID {
-            MessageManager.shared.startListeningForMessages(for: uid)
-            ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
-            showMainScreen()
+           uid == UserManager.shared.currentUID,
+           UserDefaults.standard.bool(forKey: "isRememberMeSelected") {
+                MessageManager.shared.startListeningForMessages(for: uid)
+                ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
+                showMainScreen()
         } else {
             showLoginScreen()
         }

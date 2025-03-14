@@ -16,6 +16,7 @@ final class Chat: Object {
     @Persisted var lastMessageText: String? = nil
     @Persisted var lastMessageDate: Date?
     @Persisted var hasUnread: Bool = false
+    @Persisted var deleteTimer: Int? = 0
     
     convenience init(contactID: String) {
         self.init()
@@ -32,13 +33,21 @@ final class Chat: Object {
     func addIncomingMessage(_ message: Message) {
         if message.text != nil && message.text != "" {
             lastMessageText = message.text
+            hasUnread = true
+            lastMessageDate = message.date
+            messages.append(message)
         }
+        
         if message.imageData != nil {
             lastMessageText = "Image"
+            hasUnread = true
+            lastMessageDate = message.date
+            messages.append(message)
         }
-        lastMessageDate = message.date
-        hasUnread = true
-        messages.append(message)
+        
+        if message.deleteDate != nil {
+            deleteTimer = message.deleteDate
+        }
     }
     
     func addMessage(_ message: Message) {
@@ -68,7 +77,8 @@ final class Chat: Object {
                 messages: messages.map{ $0.toDTO() }.sorted { $0.date < $1.date },
                 lastMessageText: lastMessageText ?? "",
                 lastMessageDate: lastMessageDate ?? Date(),
-                hasUnread: hasUnread)
+                hasUnread: hasUnread,
+                deleteTimer: deleteTimer)
     }
 }
 
@@ -80,6 +90,7 @@ struct ChatDTO {
     let lastMessageText: String
     let lastMessageDate: Date
     let hasUnread: Bool
+    let deleteTimer: Int?
     
     func toChat() -> Chat {
         let chat = Chat()
@@ -89,7 +100,19 @@ struct ChatDTO {
         chat.lastMessageDate = self.lastMessageDate
         chat.lastMessageText = self.lastMessageText
         chat.hasUnread = self.hasUnread
+        chat.deleteTimer = self.deleteTimer
         chat.messages.append(objectsIn: self.messages.map({$0.toMessage()}))
         return chat
     }
+}
+
+extension ChatDTO: Hashable {
+    static func == (lhs: ChatDTO, rhs: ChatDTO) -> Bool {
+        return lhs.contactID == rhs.contactID
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
 }

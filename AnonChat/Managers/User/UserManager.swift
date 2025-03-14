@@ -62,6 +62,7 @@ final class UserManager {
                         self.checkKey(for: userID)
                         MessageManager.shared.startListeningForMessages(for: userID)
                         ChatManager.shared.startListeningForDeleteChatSignal(for: userID)
+                        NetworkChatService.shared.startListeningForDeleteTimer(for: userID)
                         self.userService.updateFCMToken()
                         self.userService.updateCurrentUserData(userID: userID, status: "Available") { result in
                             switch result {
@@ -130,7 +131,7 @@ final class UserManager {
                         self.profileImage = ""
                         MessageManager.shared.stopListeningForMessages()
                         ChatManager.shared.stopListeningForDeleteChatSignal()
-                        
+                        NetworkChatService.shared.stopListeningForDeleteTimer()
                         completion(.success(()))
                         
                     case .failure(let error):

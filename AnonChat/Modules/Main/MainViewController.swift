@@ -12,6 +12,9 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     let coordinator: MainCoordinator
     let viewModel: MainViewModel
     
+    let contactsTableView = ContactsTableView()
+    let chatsTableView = ChatsTableView()
+    
     private var cancellables = Set<AnyCancellable>()
     
     private let backgroundImage = UIImageView()
@@ -20,8 +23,7 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     private let searchBar = CustomSearchBar(placeholderTitle: "Search contacts...")
     private let subview = UIView()
     
-    private let contactsTableView = ContactsTableView()
-    private let chatsTableView = ChatsTableView()
+
 
     private let searchLabel = UILabel()
     private let backButton = CustomButton()
@@ -49,7 +51,7 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.view.layoutSubviews()
+        chatsTableView.reloadData()
         viewModel.fetchLocalContacts()
         viewModel.fetchLocalChats()
     }
@@ -124,30 +126,7 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     }
     
     private func bindViewModel() {
-        viewModel.$chats
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] chats in
-                guard let self = self else { return }
-                chatsTableView.data = chats
-                chatsTableView.reloadData()
-            }
-            .store(in: &cancellables)
-        
-        
-        viewModel.$localContacts
-            .combineLatest(viewModel.$networkContacts, viewModel.$isSearching)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] (local, network, isSearching) in
-                guard let self = self else { return }
-                contactsTableView.localContacts = local
-                contactsTableView.networkContacts = network
-                
-                contactsTableView.reloadData()
-                contactsTableView.updateEmpty(isSearching: isSearching)
-                
-                updateUI(for: isSearching ? .active : .inactive)
-            }
-            .store(in: &cancellables)
+        viewModel.parentVC = self
         
         viewModel.$profileImage
             .removeDuplicates()
@@ -168,8 +147,8 @@ class MainViewController: UIViewController, UISearchBarDelegate {
         
         backButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
+            updateUI(for: .inactive)
             view.endEditing(true)
-            contactsTableView.networkContacts.removeAll()
             viewModel.isSearching = false
         }, for: .touchUpInside)
         
@@ -183,6 +162,7 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     //MARK: Delegate
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         self.searchBar.setActiveThinColor(is: true)
+        updateUI(for: .active)
         viewModel.isSearching = true
         return true
     }
@@ -193,18 +173,11 @@ class MainViewController: UIViewController, UISearchBarDelegate {
         self.searchBar.text = ""
         viewModel.isSearching = false
         viewModel.fetchLocalContacts()
-        contactsTableView.reloadData()
         return true
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchBar.setShowsCancelButton(false, animated: false)
-        
-        if !searchText.isEmpty {
-            contactsTableView.updateEmpty(isSearching: true)
-        } else {
-            contactsTableView.updateEmpty(isSearching: false)
-        }
         viewModel.searchContacts(query: searchText)
     }
     

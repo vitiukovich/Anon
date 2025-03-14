@@ -18,6 +18,8 @@ class MessagesTableViewCell: UITableViewCell {
         self.selectionStyle = .none
         self.backgroundColor = .clear
         
+        guard message.text != nil || message.imageData != nil else { return }
+        
         contentView.subviews.forEach { $0.removeFromSuperview() }
         
         let isCurrentUser = message.senderID == UserManager.shared.currentUID

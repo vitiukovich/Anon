@@ -64,7 +64,7 @@ class LoginView: UIView, UITextFieldDelegate {
         
         self.addSubview(loginUsername)
         self.addSubview(loginPassword)
-//        self.addSubview(rememberMeStackView)
+        self.addSubview(rememberMeStackView)
         self.addSubview(loginButton)
         
         NSLayoutConstraint.activate([
@@ -76,11 +76,11 @@ class LoginView: UIView, UITextFieldDelegate {
             loginPassword.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -25),
             loginPassword.topAnchor.constraint(equalTo: loginUsername.bottomAnchor, constant: 45),
             
-//            rememberMeStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 45),
-//            rememberMeStackView.topAnchor.constraint(equalTo: loginPassword.bottomAnchor, constant: 40),
+            rememberMeStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 45),
+            rememberMeStackView.topAnchor.constraint(equalTo: loginPassword.bottomAnchor, constant: 40),
             
             loginButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            loginButton.topAnchor.constraint(equalTo: loginPassword.bottomAnchor, constant: 45),
+            loginButton.topAnchor.constraint(equalTo: rememberMeStackView.bottomAnchor, constant: 45),
             loginButton.heightAnchor.constraint(equalToConstant: 50),
             loginButton.widthAnchor.constraint(equalToConstant: 209),
         ])

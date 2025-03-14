@@ -13,16 +13,37 @@ final class ProfileViewModel {
     @Published var isContactBlocked: Bool = false
     @Published var errorMessage: String? = nil
     @Published var images: [UIImage] = []
+    @Published var autoDeleteOption: AutoDeleteView.Option = .off
     
+    let contactID: String
+    
+    private let chat: Chat?
     private let contactManager = ContactManager.shared
     private let contact: ContactDTO
-    
     
     init(contact: ContactDTO) {
         self.contact = contact
         self.isContactAdded = contactManager.isContactExists(username: contact.username)
         self.isContactBlocked = contact.isContactBlocked
         self.images = ChatManager.shared.fetchChatImagesFromRealm(with: contact.userID)
+        self.chat = ChatManager.shared.getOrCreateChat(for: UserManager.shared.currentUID ?? "", with: contact.userID)
+        self.contactID = contact.userID
+        switch chat?.deleteTimer {
+        case 0, nil: autoDeleteOption = .off
+        case 1: autoDeleteOption = .oneHour
+        case 2: autoDeleteOption = .oneDay
+        case 3: autoDeleteOption = .oneWeek
+        default: break
+        }
+        bindNotifications()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .newAutoDeleteTime, object: nil)
+    }
+    
+    func bindNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAutoDeleteTime(_:)), name: .newAutoDeleteTime, object: nil)
     }
     
     func toggleContactPressed() {
@@ -45,6 +66,7 @@ final class ProfileViewModel {
         }
     }
     
+    
     func toggleBlockPressed() {
         if isContactBlocked {
             BlockListManager.shared.unblockUser(userID: contact.userID) { [weak self] result in
@@ -66,6 +88,19 @@ final class ProfileViewModel {
                     errorMessage = error.localizedDescription
                 }
             }
+        }
+    }
+    
+    @objc private func handleAutoDeleteTime(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let deleteTime = userInfo["deleteTime"] as? Int else { return }
+        
+        switch deleteTime {
+        case 0: autoDeleteOption = .off
+        case 1: autoDeleteOption = .oneHour
+        case 2: autoDeleteOption = .oneDay
+        case 3: autoDeleteOption = .oneWeek
+        default: break
         }
     }
     

@@ -8,23 +8,31 @@
 import UIKit
 import Firebase
 import FirebaseMessaging
+import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        setupRealmMigrations()
         FirebaseApp.configure()
-        
         UNUserNotificationCenter.current().delegate = self
-        
-        setupNotifications()
-        
-        setDefaultSettings()
-        
         Messaging.messaging().delegate = self
-        
+        setupNotifications()
+        setDefaultSettings()
+        deleteExpiredMessages()
         return true
+    }
+    
+    func deleteExpiredMessages() {
+        let realm = try! Realm()
+        let allChats = realm.objects(Chat.self)
+
+        for chat in allChats {
+            LocalChatService.shared.deleteExpiredMessages(for: chat)
+        }
     }
 
     func setupNotifications() {
@@ -40,15 +48,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+    
+    func setupRealmMigrations() {
+        let config = Realm.Configuration(
+            schemaVersion: 2,
+            migrationBlock: { migration, oldSchemaVersion in
+                if oldSchemaVersion < 2 {
+                    migration.enumerateObjects(ofType: Chat.className()) { _, newObject in
+                        newObject?["deleteTimer"] = nil
+                    }
+                }
+            }
+        )
+        Realm.Configuration.defaultConfiguration = config
+    }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
-        for family in UIFont.familyNames {
-            print(family)
-            for font in UIFont.fontNames(forFamilyName: family) {
-                print("   \(font)")
-            }
-        }
     }
     
     // MARK: UISceneSession Lifecycle

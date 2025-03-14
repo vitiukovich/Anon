@@ -81,9 +81,9 @@ final class MessageView: UIView {
             
             self.addSubview(imageView)
             NSLayoutConstraint.activate([
-                imageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-                imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                imageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+                imageView.topAnchor.constraint(equalTo: topAnchor),
+                imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
                 imageView.widthAnchor.constraint(equalToConstant: 200),
                 imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: aspectRatio),
                 imageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),

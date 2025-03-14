@@ -117,7 +117,7 @@ final class NetworkMessageService {
                 "senderID": message.senderID,
                 "recipientID": contact.userID,
                 "date": message.date.timeIntervalSince1970,
-                "deleteData": message.deleteDate?.timeIntervalSince1970 ?? 0]
+                "deleteData": message.deleteDate ?? ""]
             
             let dispatchGroup = DispatchGroup()
             

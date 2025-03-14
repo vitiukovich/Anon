@@ -202,7 +202,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
         
         callButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
-            coordinator.call(vc: self)
+            coordinator.showAutoDelete(vc: self, option: viewModel.autoDeleteOption, contactID: viewModel.contactID)
         }, for: .touchUpInside)
         
         backButton.addAction(UIAction {[weak self] _ in
@@ -220,8 +220,8 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     private func configureButtons() {
         let buttons = [chatButton, callButton, muteButton, blockButton]
         let labels = [chatLabel, callLabel, muteLabel, blockLabel]
-        let buttonImages = ["message", "phone", "bell.slash", "person.slash"]
-        let labelTitles = ["Chat", "Call", "Mute", "Block"]
+        let buttonImages = ["message", "clock", "bell.slash", "person.slash"]
+        let labelTitles = ["Chat", "Timer", "Mute", "Block"]
         
         for (index, button) in buttons.enumerated() {
             let stackView = UIStackView()

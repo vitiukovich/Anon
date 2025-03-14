@@ -38,7 +38,7 @@ final class Contact: Object {
     }
 }
 
-struct ContactDTO {
+struct ContactDTO: Hashable {
     let username: String
     let status: String
     let profileImage: String
@@ -49,7 +49,18 @@ struct ContactDTO {
     func toContact() -> Contact {
         return Contact(username: username, status: status, profileImage: profileImage, userID: userID, publicKey: publicKey, isContactBlocked: isContactBlocked)
     }
+    
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(userID)
+    }
+
+    static func == (lhs: ContactDTO, rhs: ContactDTO) -> Bool {
+        return lhs.userID == rhs.userID
+    }
 }
+
+
 
 
 

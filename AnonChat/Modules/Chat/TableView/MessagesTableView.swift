@@ -7,24 +7,18 @@
 
 import UIKit
 
-class MessagesTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
+class MessagesTableView: UITableView, UITableViewDelegate {
 
-    weak var parentView: ChatViewController?
-    var data: [MessageDTO] = [] {
-        didSet {
-            backgroundTableView.isHidden = !self.data.isEmpty
-            DispatchQueue.main.async {
-                self.reloadData()
-                self.scrollToBottom()
-            }
-        }
+    enum Section {
+        case main
     }
-
-    private let backgroundTableView = BackgroundView()
     
+    weak var parentView: ChatViewController?
+    
+    private let backgroundTableView = BackgroundView()
+    private var diffableDataSource: UITableViewDiffableDataSource<Section, MessageDTO>!
     
     func configure() {
-        self.dataSource = self
         self.delegate = self
         
         self.translatesAutoresizingMaskIntoConstraints = false
@@ -37,8 +31,38 @@ class MessagesTableView: UITableView, UITableViewDelegate, UITableViewDataSource
         self.estimatedRowHeight = 78
         
         backgroundTableView.configure(frame: self.frame)
-        backgroundTableView.label.text = "No Any Messages"
+        backgroundTableView.transform = CGAffineTransform(rotationAngle: .pi)
+        backgroundTableView.label.text = "No Messages"
+        backgroundView = backgroundTableView
+        
         self.register(MessagesTableViewCell.self, forCellReuseIdentifier: "MessagesCell")
+
+        diffableDataSource = UITableViewDiffableDataSource<Section, MessageDTO>(tableView: self) { tableView, indexPath, message in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesCell", for: indexPath) as! MessagesTableViewCell
+            cell.transform = CGAffineTransform(rotationAngle: .pi)
+            cell.configure(message: message) { [weak self] image in
+                guard let self = self, let parentView = parentView else { return }
+                parentView.showImage(image: image)
+            }
+            return cell
+        }
+        
+        self.dataSource = diffableDataSource
+    }
+    
+    func updateMessages(_ messages: [MessageDTO]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, MessageDTO>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(messages, toSection: .main)
+        
+        DispatchQueue.main.async {
+            guard let diffableDataSource = self.diffableDataSource else { return }
+            diffableDataSource.apply(snapshot, animatingDifferences: true) {
+                self.scrollToBottom()
+            }
+        }
+        
+        backgroundView?.isHidden = !messages.isEmpty
     }
     
     func scrollToBottom() {
@@ -51,21 +75,21 @@ class MessagesTableView: UITableView, UITableViewDelegate, UITableViewDataSource
     }
     
     //MARK: DataSource
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesCell", for: indexPath) as! MessagesTableViewCell
-        cell.transform = CGAffineTransform(rotationAngle: .pi)
-        let message = data[indexPath.row]
-        cell.configure(message: message) { [weak self] image in
-            guard let self = self,
-                  let parentView = parentView else { return }
-            parentView.showImage(image: image)
-        }
-        return cell
-    }
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return data.count
+//    }
+//    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesCell", for: indexPath) as! MessagesTableViewCell
+//        cell.transform = CGAffineTransform(rotationAngle: .pi)
+//        let message = data[indexPath.row]
+//        cell.configure(message: message) { [weak self] image in
+//            guard let self = self,
+//                  let parentView = parentView else { return }
+//            parentView.showImage(image: image)
+//        }
+//        return cell
+//    }
     
     //MARK: Delegate
     

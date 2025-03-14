@@ -17,6 +17,7 @@ final class LocalMessageService {
         try realm.write {
             chat.addIncomingMessage(message)
         }
+
     }
 
     func saveMessage(_ message: Message, to chat: Chat) throws {
