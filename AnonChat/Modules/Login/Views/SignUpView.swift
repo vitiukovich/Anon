@@ -125,7 +125,7 @@ class SignUpView: UIView, UITextFieldDelegate {
                 switch result {
                 case .success():
                     self.coordinator.navigateToMainView()
-                case .failure(let error):
+                case .failure(_):
                     break
                 }
             }

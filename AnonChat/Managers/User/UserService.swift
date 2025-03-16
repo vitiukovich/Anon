@@ -38,7 +38,6 @@ final class UserService {
             }
 
             guard document.exists,
-                  let data = document.data(),
                   let username = data["username"] as? String,
                   let status = data["status"] as? String,
                   let profileImage = data["profileImage"] as? String,

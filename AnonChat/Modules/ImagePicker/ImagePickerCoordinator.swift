@@ -75,7 +75,7 @@ final class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UI
         }
     }
     
-    @available(iOS 17.6, *)
+    @available(iOS 17.0, *)
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
         

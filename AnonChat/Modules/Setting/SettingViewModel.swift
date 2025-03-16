@@ -94,7 +94,7 @@ final class SettingViewModel {
         UserManager.shared.logoutUser { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .failure(let error):
+            case .failure(_):
                 break
             case .success:
                 coordinator.logout()

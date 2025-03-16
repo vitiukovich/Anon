@@ -141,7 +141,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 76C42DE32D1D7882004C65F7 /* Build configuration list for PBXProject "Anon Chat X" */;
+			buildConfigurationList = 76C42DE32D1D7882004C65F7 /* Build configuration list for PBXProject "AnonChat" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -192,11 +192,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = AnonChat/AnonChat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = J3CBNU5BFW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AnonChat/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Anon Chat X";
+				INFOPLIST_KEY_CFBundleDisplayName = AnonChat;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "We need access to your library to send photos.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to take and send photos.";
@@ -204,7 +204,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -229,11 +229,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = AnonChat/AnonChat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = J3CBNU5BFW;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AnonChat/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Anon Chat X";
+				INFOPLIST_KEY_CFBundleDisplayName = AnonChat;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "We need access to your library to send photos.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to take and send photos.";
@@ -241,7 +241,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -381,7 +381,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		76C42DE32D1D7882004C65F7 /* Build configuration list for PBXProject "Anon Chat X" */ = {
+		76C42DE32D1D7882004C65F7 /* Build configuration list for PBXProject "AnonChat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				76C42DFE2D1D7883004C65F7 /* Debug */,
