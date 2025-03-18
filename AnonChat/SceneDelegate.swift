@@ -24,7 +24,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
            uid == UserManager.shared.currentUID,
            UserDefaults.standard.bool(forKey: "isRememberMeSelected") {
                 MessageManager.shared.startListeningForMessages(for: uid)
+                NetworkMessageService.shared.listenForDeleteRequests(for: uid)
                 ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
+                NetworkChatService.shared.startListeningForDeleteTimer(for: uid)
                 showMainScreen()
         } else {
             showLoginScreen()

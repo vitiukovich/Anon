@@ -65,8 +65,7 @@ class MainViewModel {
                         }
                         
                         notification.show()
-                    case .failure(let error):
-                        print(error.localizedDescription)
+                    case .failure(_): break
                     }
                 }
                 self.newMessage = message
