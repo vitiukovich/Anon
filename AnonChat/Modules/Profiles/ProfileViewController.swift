@@ -27,11 +27,11 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     private let statusView = UIView()
     
     private let chatButton = CustomButton()
-    private let callButton = CustomButton()
+    private let autoDeleteButton = CustomButton()
     private let muteButton = CustomButton()
     private let blockButton = CustomButton()
     private let chatLabel = UILabel()
-    private let callLabel = UILabel()
+    private let autoDeleteLabel = UILabel()
     private let muteLabel = UILabel()
     private let blockLabel = UILabel()
     private let buttonStackView = UIStackView()
@@ -188,6 +188,11 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
             self.coordinator.showChat(withContact: contact)
         }, for: .touchUpInside)
         
+        muteButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            coordinator.showReport(vc: self, contact: self.contact)
+        }, for: .touchUpInside)
+        
         blockButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             if viewModel.isContactBlocked {
@@ -200,7 +205,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
             }
         }, for: .touchUpInside)
         
-        callButton.addAction(UIAction { [weak self] _ in
+        autoDeleteButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             coordinator.showAutoDelete(vc: self, option: viewModel.autoDeleteOption, contactID: viewModel.contactID)
         }, for: .touchUpInside)
@@ -218,10 +223,10 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
 
     
     private func configureButtons() {
-        let buttons = [chatButton, callButton, muteButton, blockButton]
-        let labels = [chatLabel, callLabel, muteLabel, blockLabel]
-        let buttonImages = ["message", "clock", "bell.slash", "person.slash"]
-        let labelTitles = ["Chat", "Timer", "Mute", "Block"]
+        let buttons = [chatButton, autoDeleteButton, muteButton, blockButton]
+        let labels = [chatLabel, autoDeleteLabel, muteLabel, blockLabel]
+        let buttonImages = ["message", "clock", "exclamationmark.shield", "person.slash"]
+        let labelTitles = ["Chat", "Timer", "Report", "Block"]
         
         for (index, button) in buttons.enumerated() {
             let stackView = UIStackView()

@@ -45,5 +45,21 @@ final class ChatCoordinator {
         alert.sendAction(to: contactID)
         alert.show(fromVC: vc)
     }
+    
+    func showReport(vc: ChatViewController, contact: ContactDTO) {
+        let alert = AlertViewController(title: "Report User", message: "Are you sure you want to report this user? This action cannot be undone.")
+        alert.addButton(withTitle: "Report", action: UIAction { _ in
+            let email = "vitiukovich@icloud.com"
+            let subject = "Complaint about user \(contact.username)"
+            let body = "Please describe the issue with this user ..."
+
+            if let urlString = "mailto:\(email)?subject=\(subject)&body=\(body)"
+                .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+               let url = URL(string: urlString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        alert.show(fromVC: vc)
+    }
 
 }

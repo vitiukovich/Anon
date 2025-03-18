@@ -26,4 +26,29 @@ final class LocalMessageService {
             chat.addMessage(message)
         }
     }
+    
+    func deleteMessage(fromChat chatID: String, messageDate: Date) throws {
+        let realm = try Realm()
+        
+        guard let chat = realm.object(ofType: Chat.self, forPrimaryKey: chatID) else {
+            return
+        }
+        
+        guard !chat.isInvalidated else {
+            return
+        }
+
+        guard let messageToDelete = chat.messages.filter("date == %@", messageDate).first else {
+            return
+        }
+        
+        try realm.write {
+            realm.delete(messageToDelete)
+            
+            if chat.messages.isEmpty {
+                chat.lastMessageText = nil
+            }
+        }
+
+    }
 }

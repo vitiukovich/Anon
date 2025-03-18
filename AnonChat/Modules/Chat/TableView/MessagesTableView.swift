@@ -40,10 +40,16 @@ class MessagesTableView: UITableView, UITableViewDelegate {
         diffableDataSource = UITableViewDiffableDataSource<Section, MessageDTO>(tableView: self) { tableView, indexPath, message in
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesCell", for: indexPath) as! MessagesTableViewCell
             cell.transform = CGAffineTransform(rotationAngle: .pi)
-            cell.configure(message: message) { [weak self] image in
+            cell.configure(message: message, imageTapHandler: { [weak self] image in
                 guard let self = self, let parentView = parentView else { return }
                 parentView.showImage(image: image)
-            }
+            }, deleteMessageHandler: { [weak self] message in
+                guard let self,
+                      let contactID = parentView?.userID,
+                      let chatID = parentView?.chatID else { return }
+                MessageManager.shared.deleteMessage(message, fromChat: chatID, contactID: contactID)
+                
+            })
             return cell
         }
         
@@ -73,29 +79,9 @@ class MessagesTableView: UITableView, UITableViewDelegate {
             self.scrollToRow(at: indexPath, at: .top, animated: true)
         }
     }
-    
-    //MARK: DataSource
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return data.count
-//    }
-//    
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesCell", for: indexPath) as! MessagesTableViewCell
-//        cell.transform = CGAffineTransform(rotationAngle: .pi)
-//        let message = data[indexPath.row]
-//        cell.configure(message: message) { [weak self] image in
-//            guard let self = self,
-//                  let parentView = parentView else { return }
-//            parentView.showImage(image: image)
-//        }
-//        return cell
-//    }
-    
+
     //MARK: Delegate
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
     }
-    
-    
 }

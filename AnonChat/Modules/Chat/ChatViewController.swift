@@ -11,6 +11,7 @@ import RealmSwift
 
 class ChatViewController: UIViewController, UITextViewDelegate {
     lazy var userID = contact.userID
+    lazy var chatID = viewModel?.chat.id
     
     private var viewModel: ChatViewModel?
     private let coordinator: ChatCoordinator
@@ -22,7 +23,8 @@ class ChatViewController: UIViewController, UITextViewDelegate {
     private let backButton = CustomButton()
     private let username = UILabel()
     private let profileButton = CustomButton()
-    private let callButton = CustomButton()
+    private let reportButton = CustomButton()
+    private let autoDeleteButton = CustomButton()
     private let subview = UIView()
     private let tableView = MessagesTableView()
     private let textView = CustomTextView()
@@ -79,7 +81,9 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         backButton.setCircleButton(height: 40, imageName: "arrow.left")
         username.setDefault(text: contact.username, ofSize: 18, weight: .semibold, color: .mainText)
         profileButton.setProfileButton(forUser: contact, height: 40)
-        callButton.setCircleButton(height: 40, imageName: "clock")
+        reportButton.setCircleButton(height: 40, imageName: "exclamationmark.shield")
+        reportButton.tintColor = .wrongValueTextField
+        autoDeleteButton.setCircleButton(height: 40, imageName: "clock")
         tableView.parentView = self
         tableView.configure()
         
@@ -88,7 +92,8 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         view.addSubview(backButton)
         view.addSubview(profileButton)
         view.addSubview(username)
-        view.addSubview(callButton)
+        view.addSubview(reportButton)
+        view.addSubview(autoDeleteButton)
         subview.addSubview(tableView)
         subview.addSubview(textView)
         
@@ -105,9 +110,13 @@ class ChatViewController: UIViewController, UITextViewDelegate {
             
             username.centerYAnchor.constraint(equalTo: profileButton.centerYAnchor),
             username.leadingAnchor.constraint(equalTo: profileButton.trailingAnchor, constant: 15),
+            username.trailingAnchor.constraint(lessThanOrEqualTo: reportButton.leadingAnchor, constant: -15),
             
-            callButton.topAnchor.constraint(equalTo: backButton.topAnchor),
-            callButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25),
+            autoDeleteButton.topAnchor.constraint(equalTo: backButton.topAnchor),
+            autoDeleteButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25),
+            
+            reportButton.topAnchor.constraint(equalTo: backButton.topAnchor),
+            reportButton.trailingAnchor.constraint(equalTo: autoDeleteButton.leadingAnchor, constant: -15),
             
             subview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90),
             subview.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -183,9 +192,14 @@ class ChatViewController: UIViewController, UITextViewDelegate {
             coordinator.showProfile(contact: contact)
         }, for: .touchUpInside)
         
-        callButton.addAction(UIAction { [weak self] _ in
+        autoDeleteButton.addAction(UIAction { [weak self] _ in
             guard let self else { return }
             coordinator.showAutoDelete(vc: self, option: viewModel.autoDeleteOption, contactID: contact.userID)
+        }, for: .touchUpInside)
+        
+        reportButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            coordinator.showReport(vc: self, contact: contact)
         }, for: .touchUpInside)
         
         textView.rightButton.addAction(UIAction { [weak self] _ in

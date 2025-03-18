@@ -72,4 +72,19 @@ final class SettingCoordinator {
         let coordinator = ProfileCoordinator(navigationController: navigationController)
         coordinator.start(contact: contact)
     }
+    
+    func showSupportChat() {
+        ContactManager.shared.fetchContact(byUID: "POTM94UaCZMYO4fRQGrjatPyWAK2", completion: { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let contact):
+                let coordinator = ChatCoordinator(navigationController: navigationController)
+                navigationController.popViewController(animated: true)
+                coordinator.start(contact: contact)
+                
+            case .failure(_): break
+            }
+        })
+        
+    }
 }

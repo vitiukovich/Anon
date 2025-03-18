@@ -15,6 +15,7 @@ final class NetworkMessageService {
     static let shared = NetworkMessageService()
     
     private var messageHandle: DatabaseHandle?
+    private var deleteHandel: DatabaseHandle?
     
     private let databaseRef = Database.database().reference()
     
@@ -89,6 +90,41 @@ final class NetworkMessageService {
             databaseRef.child("messages").removeObserver(withHandle: handle)
             messageHandle = nil
         }
+    }
+    
+    func listenForDeleteRequests(for userID: String) {
+        deleteHandel = databaseRef.child("delete_requests").child(userID).observe(.childAdded) { snapshot in
+            guard let requestData = snapshot.value as? [String: Any],
+                  let chatID = requestData["chatID"] as? String,
+                  let senderID = requestData["senderID"] as? String,
+                  let messageTimestamp = requestData["messageDate"] as? TimeInterval else {
+                return
+            }
+
+            let messageDate = Date(timeIntervalSince1970: messageTimestamp)
+
+            do {
+                try LocalMessageService.shared.deleteMessage(fromChat: chatID, messageDate: messageDate)
+                snapshot.ref.removeValue()
+            } catch {
+            }
+        }
+    }
+    
+    func stopListeningForDeleteRequests() {
+        guard let handle = deleteHandel else { return }
+        databaseRef.child("delete_requests").removeObserver(withHandle: handle)
+        deleteHandel = nil
+    }
+    
+    func sendDeleteRequest(to recipientID: String, message: MessageDTO) {
+        let deleteRequest: [String: Any] = [
+            "chatID": UserManager.shared.currentUID ?? "",
+            "senderID": message.senderID,
+            "messageDate": message.date.timeIntervalSince1970
+        ]
+
+        databaseRef.child("delete_requests").child(recipientID).childByAutoId().setValue(deleteRequest)
     }
     
     

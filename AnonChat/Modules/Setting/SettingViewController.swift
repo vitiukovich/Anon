@@ -59,7 +59,7 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         tableView.dataSource = self
         tableView.backgroundColor = .clear
         tableView.register(SettingCell.self, forCellReuseIdentifier: "SettingCell")
-        tableView.rowHeight = 80
+        tableView.rowHeight = 70
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         backgroundImage.setBackgroundImage(toView: self.view)
@@ -177,7 +177,7 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
     
     //MARK: TableViewDataSorce
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        return 6
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -195,8 +195,10 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         case 2:
             cell.configure(title: "Blocked Users", isIcon: true)
         case 3:
-            cell.configure(title: "Delete All Data", textColor: .wrongValueTextField, isIcon: true)
+            cell.configure(title: "Support", textColor: .rightValueTextField , isIcon: true)
         case 4:
+            cell.configure(title: "Delete All Data", textColor: .wrongValueTextField, isIcon: true)
+        case 5:
             cell.configure(title: "Delete Account", textColor: .wrongValueTextField, isIcon: true)
         default:
             break
@@ -211,12 +213,13 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         case 2:
             viewModel.showBlockedUsers()
         case 3:
+            coordinator.showSupportChat()
+        case 4:
             coordinator.showClearDeviceConfirmation(vc: self, action: UIAction { [weak self] _ in
                 guard let self else { return }
                 viewModel.clearDeviceData()
             })
-            
-        case 4:
+        case 5:
             coordinator.showDeleteAccountConfirmation(vc: self, action: UIAction { [weak self] _ in
                 guard let self else { return }
                 viewModel.deleteAccount()

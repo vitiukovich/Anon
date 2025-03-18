@@ -12,6 +12,13 @@ final class MessageManager {
     static let shared = MessageManager()
     private init() {}
     
+    func deleteMessage(_ message: MessageDTO, fromChat chatID: String, contactID: String) {
+        do {
+            try LocalMessageService.shared.deleteMessage(fromChat: chatID, messageDate: message.date)
+            NetworkMessageService.shared.sendDeleteRequest(to: contactID, message: message)
+        } catch {}
+    }
+    
     func sendMessage(to chat: Chat, message: Message, completion: @escaping (Result<Void, Error>) -> Void) {
         NetworkContactService.shared.fetchContact(byUID: chat.contactID) { result in
             switch result {
