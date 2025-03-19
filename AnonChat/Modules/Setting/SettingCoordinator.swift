@@ -85,6 +85,21 @@ final class SettingCoordinator {
             case .failure(_): break
             }
         })
-        
+    }
+    
+    func showContactUs(vc: SettingViewController) {
+        let viewController = AlertViewController(title: "Contact Us",
+                                                 message: "Choose a contact method")
+        viewController.addButton(withTitle: "Send Email", color: .activeButton, action: UIAction { _ in
+            if let url = URL(string: "mailto:vitiukovich@icloud.com") {
+                UIApplication.shared.open(url)
+            }
+        })
+        viewController.addButton(withTitle: "Contacts", color: .activeButton, action: UIAction {_ in
+            if let url = URL(string: "https://vitiukovich.github.io/anonchat-privacy/support.html") {
+                UIApplication.shared.open(url)
+            }
+        })
+        viewController.show(fromVC: vc)
     }
 }

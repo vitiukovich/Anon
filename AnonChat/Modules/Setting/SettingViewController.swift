@@ -177,7 +177,7 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
     
     //MARK: TableViewDataSorce
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 6
+        return 7
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -195,10 +195,12 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         case 2:
             cell.configure(title: "Blocked Users", isIcon: true)
         case 3:
-            cell.configure(title: "Support", textColor: .rightValueTextField , isIcon: true)
+            cell.configure(title: "Support Chat", textColor: .rightValueTextField , isIcon: true)
         case 4:
-            cell.configure(title: "Delete All Data", textColor: .wrongValueTextField, isIcon: true)
+            cell.configure(title: "Contact Us", textColor: .rightValueTextField, isIcon: true)
         case 5:
+            cell.configure(title: "Delete All Data", textColor: .wrongValueTextField, isIcon: true)
+        case 6:
             cell.configure(title: "Delete Account", textColor: .wrongValueTextField, isIcon: true)
         default:
             break
@@ -215,11 +217,13 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         case 3:
             coordinator.showSupportChat()
         case 4:
+            coordinator.showContactUs(vc: self)
+        case 5:
             coordinator.showClearDeviceConfirmation(vc: self, action: UIAction { [weak self] _ in
                 guard let self else { return }
                 viewModel.clearDeviceData()
             })
-        case 5:
+        case 6:
             coordinator.showDeleteAccountConfirmation(vc: self, action: UIAction { [weak self] _ in
                 guard let self else { return }
                 viewModel.deleteAccount()
