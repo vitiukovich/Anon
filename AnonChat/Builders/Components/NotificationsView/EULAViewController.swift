@@ -63,37 +63,10 @@ final class EULAViewController: UIViewController {
         ])    }
     
     func bindAction() {
-        agreeButton.addAction(UIAction { _ in
+        agreeButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
             UserDefaults.standard.set(true, forKey: "EULAAccepted")
-            let navVC = UINavigationController()
-            navVC.navigationBar.isHidden = true
-            
-            if let uid = Auth.auth().currentUser?.uid,
-               uid == UserManager.shared.currentUID,
-               UserDefaults.standard.bool(forKey: "isRememberMeSelected") {
-                MessageManager.shared.startListeningForMessages(for: uid)
-                NetworkMessageService.shared.listenForDeleteRequests(for: uid)
-                ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
-                NetworkChatService.shared.startListeningForDeleteTimer(for: uid)
-                
-                
-                let coordinator = MainCoordinator(navigationController: navVC)
-                let mainVM = MainViewModel(coordinator: coordinator)
-                let mainVC = MainViewController(viewModel: mainVM, coordinator: coordinator)
-                
-                
-                navVC.viewControllers = [mainVC]
-            } else {
-                let navVC = UINavigationController()
-                let coordinator = LoginCoordinator()
-                let loginVC = LoginViewController(coordinator: coordinator)
-
-                navVC.viewControllers = [loginVC]
-                }
-            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                sceneDelegate.window?.rootViewController = navVC
-                sceneDelegate.window?.makeKeyAndVisible()
-            }
+            self.dismiss(animated: true)
         }, for: .touchUpInside)
     }
     

@@ -38,6 +38,15 @@ class LoginViewController: UIViewController {
         addKeyboardObservers()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !UserDefaults.standard.bool(forKey: "EULAAccepted") {
+            let EULAViewController = EULAViewController()
+            EULAViewController.modalPresentationStyle = .fullScreen
+            present(EULAViewController, animated: true)
+        }
+    }
+    
     private func setupUI() {
         view.backgroundColor = .mainBackground
         

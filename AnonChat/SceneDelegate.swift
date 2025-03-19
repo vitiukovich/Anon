@@ -20,20 +20,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         self.window = window
         
-        if !UserDefaults.standard.bool(forKey: "EULAAccepted") {
-            window.rootViewController = EULAViewController()
+        if let uid = Auth.auth().currentUser?.uid,
+           uid == UserManager.shared.currentUID,
+           UserDefaults.standard.bool(forKey: "isRememberMeSelected") {
+            MessageManager.shared.startListeningForMessages(for: uid)
+            NetworkMessageService.shared.listenForDeleteRequests(for: uid)
+            ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
+            NetworkChatService.shared.startListeningForDeleteTimer(for: uid)
+            showMainScreen()
         } else {
-            if let uid = Auth.auth().currentUser?.uid,
-               uid == UserManager.shared.currentUID,
-               UserDefaults.standard.bool(forKey: "isRememberMeSelected") {
-                MessageManager.shared.startListeningForMessages(for: uid)
-                NetworkMessageService.shared.listenForDeleteRequests(for: uid)
-                ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
-                NetworkChatService.shared.startListeningForDeleteTimer(for: uid)
-                showMainScreen()
-            } else {
-                showLoginScreen()
-            }
+            showLoginScreen()
         }
         
         let theme = UserDefaults.standard.bool(forKey: "darkMode") ? UIUserInterfaceStyle.dark : .unspecified
