@@ -37,7 +37,7 @@ This project was created as part of my iOS development learning journey and util
 	<img src="Screenshots/privacyPolicy.png" width="300">
 	<img src="Screenshots/profile.png" width="300">
 	<img src="Screenshots/login.png" width="300">
-	<img src="Screenshots/settingDark.png" width="300">
+	<img src="Screenshots/setting.png" width="300">
 	<img src="Screenshots/settingLight.png" width="300">
 </div>
 
