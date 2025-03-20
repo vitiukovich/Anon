@@ -79,7 +79,7 @@ Xcode should automatically resolve all dependencies, but if something is missing
 
 ---
 
-##💡 Future Improvements
+## 💡 Future Improvements
 	•	Add files sender
 	•	Add themes
   • Add groops 
