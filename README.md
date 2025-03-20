@@ -80,10 +80,11 @@ Xcode should automatically resolve all dependencies, but if something is missing
 ---
 
 ## 💡 Future Improvements
-	•	Add files sender
-	•	Add themes
-  • Add groops 
-  • Add calls
+
+• Add files sender
+• Add themes
+• Add groops 
+• Add calls
 
 ---
 
