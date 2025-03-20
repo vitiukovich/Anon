@@ -28,16 +28,16 @@ This project was created as part of my iOS development learning journey and util
 
 ## 📸 Screenshots  
 
-![Home Dark Screen](Screenshots/mainDark.png)
-![Home Light Screen](Screenshots/mainLight.png)
-![Search Screen](Screenshots/search.png)
-![Chat Screen](Screenshots/chat.png)  
-![Auto-Delete Screen](Screenshots/autoDelete.png)
-![Privacy Screen](Screenshots/privacyPolicy.png)
-![Profile Screen](Screenshots/profile.png)
-![Login Screen](Screenshots/login.png)
-![Setting Dark Screen](Screenshots/settingDark.png)
-![Setting Light Screen](Screenshots/settingLight.png)
+<img src="Screenshots/mainDark.png" width="300">
+<img src="Screenshots/mainLight.png" width="300">
+<img src="Screenshots/search.png" width="300">
+<img src="Screenshots/chat.png" width="300">
+<img src="Screenshots/autoDelete.png" width="300">
+<img src="Screenshots/privacyPolicy.png" width="300">
+<img src="Screenshots/profile.png" width="300">
+<img src="Screenshots/login.png" width="300">
+<img src="Screenshots/settingDark.png" width="300">
+<img src="Screenshots/settingLight.png" width="300">
 
 
 ---
