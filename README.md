@@ -8,10 +8,10 @@ This project was created as part of my iOS development learning journey and util
 ## 🚀 Features  
 
 ✔️ User authentication and registration (Firebase)  
-✔️ Send and receive anonymous messages  
+✔️ Send and receive anonymous messages (Firebace)
 ✔️ Data encryption (CryptoKit)  
-✔️ Local data storage (Realm/Core Data)  
-✔️ Modern UI built with UIKit  
+✔️ Local data storage (Realm)  
+✔️ Custom UI built with UIKit  
 
 ---
 
