@@ -1,7 +1,7 @@
-# 🕵️‍♂️ Anon  
+# 🕵️‍♂️ AnonChat X  
 
-**Anon** is an iOS application for **anonymous messaging**.  
-This project was created as part of my iOS development learning journey and utilizes **Swift, Firebase, and Realm**.  
+**AnonChat X** is an iOS application for **anonymous messaging**.  
+This project was created as part of my iOS development learning journey and utilizes **Swift, UIKit, Firebase, and Realm**.  
 
 ---
 
