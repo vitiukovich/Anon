@@ -89,8 +89,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate, MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        guard let fcmToken = fcmToken else { return }
         
+        guard let fcmToken = fcmToken else { return }
         
         if let currentUID = UserManager.shared.currentUID {
             UserService.shared.updateCurrentUserData(userID: currentUID, fcmToken: fcmToken, completion: {_ in })

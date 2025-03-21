@@ -26,6 +26,11 @@ final class SignUpViewModel {
         setupBindings()
     }
     
+    deinit {
+        print("deinit SignUpViewModel")
+        cancellables.removeAll()
+    }
+    
     private func setupBindings() {
         $username
             .removeDuplicates()

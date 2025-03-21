@@ -16,7 +16,7 @@ final class NetworkMessageService {
     
     private var messageHandle: DatabaseHandle?
     private var deleteHandel: DatabaseHandle?
-    
+    private var listenUID: String?
     private let databaseRef = Database.database().reference()
     
     private init() {}
@@ -24,7 +24,7 @@ final class NetworkMessageService {
     func listenForMessages(for userID: String, onMessageReceived: @escaping (MessageDTO) -> Void) {
         self.stopListening()
         let encryptor = EncryptionManager(userID: userID)
-        
+        listenUID = userID
         messageHandle = databaseRef.child("messages").child(userID).observe(.childAdded) { (snapshot: DataSnapshot) in
             guard let messageData = snapshot.value as? [String: Any],
                   let id = messageData["id"] as? String,
@@ -86,9 +86,10 @@ final class NetworkMessageService {
     }
     
     func stopListening() {
-        if let handle = messageHandle {
-            databaseRef.child("messages").removeObserver(withHandle: handle)
+        if let handle = messageHandle, let uid = listenUID {
+            databaseRef.child("messages").child(uid).removeObserver(withHandle: handle)
             messageHandle = nil
+            listenUID = nil
         }
     }
     
@@ -113,8 +114,8 @@ final class NetworkMessageService {
     }
     
     func stopListeningForDeleteRequests() {
-        if let handle = deleteHandel {
-            databaseRef.child("delete_requests").removeObserver(withHandle: handle)
+        if let handle = deleteHandel, let uid = listenUID {
+            databaseRef.child("delete_requests").child(uid).removeObserver(withHandle: handle)
             deleteHandel = nil
         }
     }

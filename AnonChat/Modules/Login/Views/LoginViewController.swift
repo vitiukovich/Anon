@@ -9,20 +9,21 @@ import UIKit
 import Combine
 
 class LoginViewController: UIViewController {
-
+    
+    private var loginView: LoginView?
+    private var signUpView: SignUpView?
+    
+    private var cancellables: Set<AnyCancellable> = []
+    
+    private var subviewTopConstraint: NSLayoutConstraint!
+    
     private let coordinator: LoginCoordinator
     
     private let backgroundImage = UIImageView()
     private let welcomeLabel = UILabel()
     private let subview = UIView()
     private let segmentedControl = CustomSegmentedControl(width: 326)
-    
-    private var subviewTopConstraint: NSLayoutConstraint!
-    
-    private lazy var loginView = LoginView(coordinator: coordinator, viewController: self)
-    private lazy var signUpView = SignUpView(coordinator: coordinator, viewController: self)
 
-    
     init(coordinator: LoginCoordinator) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -32,8 +33,17 @@ class LoginViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("deinit LoginViewController")
+        cancellables.removeAll()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loginView = LoginView(coordinator: coordinator, viewController: self)
+        signUpView = SignUpView(coordinator: coordinator, viewController: self)
+        
         setupUI()
         addKeyboardObservers()
     }
@@ -47,17 +57,26 @@ class LoginViewController: UIViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let index = navigationController?.viewControllers.firstIndex(of: self) {
+            navigationController?.viewControllers.remove(at: index)
+        }
+    }
+    
     private func setupUI() {
+        guard let loginView, let signUpView else { return }
+        
         view.backgroundColor = .mainBackground
         
         backgroundImage.setBackgroundImage(toView: self.view)
         welcomeLabel.setDefault(text: "Welcome!", ofSize: 28, weight: .semibold, color: .mainText)
         subview.setSubview(toView: self.view)
         segmentedControl.setTitles(firstTitle: "Login", secondTitle: "Sign Up")
-        segmentedControl.setActions { [self] in
-            toggleViews(showing: loginView, hiding: signUpView)
-        } secondClosure: { [self] in
-            toggleViews(showing: signUpView, hiding: loginView)
+        segmentedControl.setActions { [weak self] in
+            self?.toggleViews(showing: loginView, hiding: signUpView)
+        } secondClosure: { [weak self] in
+            self?.toggleViews(showing: signUpView, hiding: loginView)
         }
 
 
@@ -100,10 +119,16 @@ class LoginViewController: UIViewController {
     }
     
     private func addKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+            .sink { [weak self] notification in
+                self?.keyboardWillShow(notification)
+            }
+            .store(in: &cancellables)
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+            .sink { [weak self] notification in
+                self?.keyboardWillHide(notification)
+            }
+            .store(in: &cancellables)
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {

@@ -17,6 +17,7 @@ final class ProfileViewModel {
     
     let contactID: String
     
+    private var cancellables: Set<AnyCancellable> = []
     private let chat: Chat?
     private let contactManager = ContactManager.shared
     private let contact: ContactDTO
@@ -39,11 +40,15 @@ final class ProfileViewModel {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .newAutoDeleteTime, object: nil)
+        cancellables.removeAll()
     }
     
     func bindNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleAutoDeleteTime(_:)), name: .newAutoDeleteTime, object: nil)
+        NotificationCenter.default.publisher(for: .newAutoDeleteTime)
+            .sink { [weak self] notification in
+                self?.handleAutoDeleteTime(notification)
+            }
+            .store(in: &cancellables)
     }
     
     func toggleContactPressed() {

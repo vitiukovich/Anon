@@ -10,22 +10,20 @@ import Combine
 
 class LoginView: UIView, UITextFieldDelegate {
     
+    private var cancellables = Set<AnyCancellable>()
+    
     private let viewModel: LoginViewModel
     private let coordinator: LoginCoordinator
-    private let viewController: LoginViewController
+    private weak var viewController: LoginViewController?
     
     private let loginSubview = UIView()
     private let loginUsername = UITextField()
     private let loginPassword = UITextField()
     private let loginButton = CustomButton()
     
-    private let errorView = ErrorView()
-    
     private let rememberMeCheckbox = CustomButton()
     private let rememberMeLabel = UILabel()
     private let rememberMeStackView = UIStackView()
-    
-    private var cancellables = Set<AnyCancellable>()
     
     init(coordinator: LoginCoordinator, viewController: LoginViewController) {
         self.viewModel = LoginViewModel()
@@ -43,6 +41,11 @@ class LoginView: UIView, UITextFieldDelegate {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        print("deinit LoginView")
+        cancellables.removeAll()
     }
     
     private func setupUI() {
@@ -109,9 +112,9 @@ class LoginView: UIView, UITextFieldDelegate {
         viewModel.$loginErrorMessage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] errorMessage in
-                guard let self = self else { return }
+                guard let vc = self?.viewController else { return }
                 guard let errorMessage = errorMessage else { return }
-                errorView.show(in: viewController.view, duration: 10, message: errorMessage)
+                ErrorView().show(in: vc.view, message: errorMessage)
             }
             .store(in: &cancellables)
         

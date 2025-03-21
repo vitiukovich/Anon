@@ -8,13 +8,14 @@
 import UIKit
 
 class CustomSegmentedControl: UIView {
+    
+    private var subViewLeadingConstraint: NSLayoutConstraint!
+    private var subViewTrailingConstraint: NSLayoutConstraint!
+    
     private let subView = UIView()
     private let firstButton = UIButton()
     private let secondButton = UIButton()
     private let width: CGFloat
-    
-    private var subViewLeadingConstraint: NSLayoutConstraint!
-    private var subViewTrailingConstraint: NSLayoutConstraint!
     
     init(width: CGFloat) {
         self.width = width
@@ -84,23 +85,25 @@ class CustomSegmentedControl: UIView {
     
     func setActions(firstClosure: @escaping () -> (), secondClosure: @escaping () -> ()) {
         
-        firstButton.addAction(UIAction { _ in
+        firstButton.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
             firstClosure()
-            UIView.animate(withDuration: 0.3) { [self] in
-                setActive(activeButton: firstButton, inactiveButton: secondButton)
-                subViewLeadingConstraint.constant = 4
-                subViewTrailingConstraint.constant = -width / 2
-                layoutIfNeeded()
+            UIView.animate(withDuration: 0.3) {
+                self.setActive(activeButton: self.firstButton, inactiveButton: self.secondButton)
+                self.subViewLeadingConstraint.constant = 4
+                self.subViewTrailingConstraint.constant = -self.width / 2
+                self.layoutIfNeeded()
             }
         }, for: .touchUpInside)
         
-        secondButton.addAction(UIAction { _ in
+        secondButton.addAction(UIAction { [weak self]  _ in
+            guard let self else { return }
             secondClosure()
-            UIView.animate(withDuration: 0.3) { [self] in
-                setActive(activeButton: secondButton, inactiveButton: firstButton)
-                subViewLeadingConstraint.constant = width / 2
-                subViewTrailingConstraint.constant = -4
-                layoutIfNeeded()
+            UIView.animate(withDuration: 0.3) {
+                self.setActive(activeButton: self.secondButton, inactiveButton: self.firstButton)
+                self.subViewLeadingConstraint.constant = self.width / 2
+                self.subViewTrailingConstraint.constant = -4
+                self.layoutIfNeeded()
             }
         }, for: .touchUpInside)
     }

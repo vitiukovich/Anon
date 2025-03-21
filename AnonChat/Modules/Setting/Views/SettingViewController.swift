@@ -41,6 +41,7 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
     }
     
     deinit {
+        print("setting deinit")
         cancellables.removeAll()
     }
     
@@ -49,7 +50,14 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if let index = navigationController?.viewControllers.firstIndex(of: self) {
+            navigationController?.viewControllers.remove(at: index)
+        }
     }
     
     private func setupUI() {

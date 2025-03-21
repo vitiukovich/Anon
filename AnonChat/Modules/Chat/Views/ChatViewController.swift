@@ -50,6 +50,11 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         setupUI()
         bindViewModel()
         addKeyboardObservers()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         guard let viewModel else { return }
         tableView.updateMessages(viewModel.messages)
     }
@@ -62,16 +67,12 @@ class ChatViewController: UIViewController, UITextViewDelegate {
             tableView.dataSource = nil
             viewModel?.cancelObservingMessages()
             cancellables.removeAll()
-            NotificationCenter.default.removeObserver(self)
             viewModel = nil
         }
     }
     
     deinit {
         cancellables.removeAll()
-        
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
     }
     
     private func setupUI() {
@@ -155,13 +156,13 @@ class ChatViewController: UIViewController, UITextViewDelegate {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 guard let self = self else { return }
-                ErrorView().show(in: subview, duration: 5, message: "Auto-Delete: \(value.rawValue)")
+                ErrorView().show(in: subview, duration: 3, message: "Auto-Delete: \(value.rawValue)")
                 self.tableView.reloadData()
             }
             .store(in: &cancellables)
         
         if !viewModel.isContactAvailable {
-            ErrorView().show(in: subview, duration: 10,  message: "Contact not available")
+            ErrorView().show(in: subview, duration: 5,  message: "Contact not available")
         }
         
         viewModel.$messages
@@ -240,10 +241,16 @@ class ChatViewController: UIViewController, UITextViewDelegate {
     }
     
     private func addKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)),
-                                               name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+            .sink { [weak self] notification in
+                self?.keyboardWillShow(notification)
+            }
+            .store(in: &cancellables)
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+            .sink { [weak self] notification in
+                self?.keyboardWillHide(notification)
+            }
+            .store(in: &cancellables)
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {

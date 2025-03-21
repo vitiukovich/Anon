@@ -39,7 +39,7 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .newMessageReceived, object: nil)
+        print("MainViewController deinitialized")
         cancellables.removeAll()
     }
     
@@ -137,24 +137,18 @@ class MainViewController: UIViewController, UISearchBarDelegate {
             }
             .store(in: &cancellables)
         
-        viewModel.$isNewMassage
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                viewModel.fetchLocalChats()
-                chatsTableView.reloadData()
-            }
-            .store(in: &cancellables)
+
         
         backButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
             updateUI(for: .inactive)
-            view.endEditing(true)
-            viewModel.isSearching = false
+            self.view.endEditing(true)
+            self.viewModel.isSearching = false
         }, for: .touchUpInside)
         
         profileButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            coordinator.showProfileSetting()
+            guard let self else { return }
+            self.coordinator.showProfileSetting()
         }, for: .touchUpInside)
         
     }

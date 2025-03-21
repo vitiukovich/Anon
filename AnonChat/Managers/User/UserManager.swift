@@ -124,16 +124,17 @@ final class UserManager {
                         self.user = nil
                         self.currentUID = nil
                         
+                        NetworkMessageService.shared.stopListeningForDeleteRequests()
+                        MessageManager.shared.stopListeningForMessages()
+                        ChatManager.shared.stopListeningForDeleteChatSignal()
+                        NetworkChatService.shared.stopListeningForDeleteTimer()
+                        
                         UserDefaults.standard.removeObject(forKey: "currentUID")
                         UserDefaults.standard.removeObject(forKey: "profileImage")
                         UserDefaults.standard.removeObject(forKey: "username")
                         UserDefaults.standard.removeObject(forKey: "publicKey")
                         UserDefaults.standard.removeObject(forKey: "status")
                         self.profileImage = ""
-                        MessageManager.shared.stopListeningForMessages()
-                        NetworkMessageService.shared.stopListeningForDeleteRequests()
-                        ChatManager.shared.stopListeningForDeleteChatSignal()
-                        NetworkChatService.shared.stopListeningForDeleteTimer()
                         
                         completion(.success(()))
                         

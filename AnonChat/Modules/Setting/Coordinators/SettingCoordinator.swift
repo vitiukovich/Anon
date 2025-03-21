@@ -10,8 +10,8 @@ import UIKit
 final class SettingCoordinator {
     
     private let navigationController: UINavigationController
-    private lazy var openProfile: (ContactDTO) -> Void = { contact in
-        self.showProfile(contact: contact)
+    private lazy var openProfile: (ContactDTO) -> Void = { [weak self] contact in
+        self?.showProfile(contact: contact)
     }
     
     init(navigationController: UINavigationController) {
@@ -32,6 +32,13 @@ final class SettingCoordinator {
     }
     
     func logout(){
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let navigationController = window.rootViewController as? UINavigationController {
+            navigationController.viewControllers.removeAll()
+        }
+        
         DispatchQueue.main.async {
             let coordinator = LoginCoordinator()
             coordinator.resetAppToLoginScreen()

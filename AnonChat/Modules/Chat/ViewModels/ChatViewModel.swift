@@ -45,7 +45,6 @@ final class ChatViewModel {
         messagesToken?.invalidate()
         messagesToken = nil
         cancellables.removeAll()
-        NotificationCenter.default.removeObserver(self, name: .newAutoDeleteTime, object: nil)
     }
     
     func fetchMessages() { 
@@ -59,7 +58,11 @@ final class ChatViewModel {
     }
     
     func bindNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleAutoDeleteTime(_:)), name: .newAutoDeleteTime, object: nil)
+        NotificationCenter.default.publisher(for: .newAutoDeleteTime)
+            .sink { [weak self] notification in
+                self?.handleAutoDeleteTime(notification)
+            }
+            .store(in: &cancellables)
     }
     
     func observeMessages() {

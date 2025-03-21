@@ -20,6 +20,11 @@ final class LoginViewModel {
     
     private var cancellables = Set<AnyCancellable>()
     
+    deinit {
+        print("deinit LoginViewModel")
+        cancellables.removeAll()
+    }
+    
     func login(completion: @escaping (Result<Void, Error>) -> Void) {
         guard !username.isEmpty, !password.isEmpty else {
             loginErrorMessage = "Enter login and password!"

@@ -9,6 +9,11 @@ import UIKit
 
 class CustomButton: UIButton {
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.layer.borderColor = UIColor.imageBorder.cgColor
+    }
+    
     func setDefaultButton(withTitle text: String, height: CGFloat = 52, color: UIColor? = nil) {
         self.addTapedAnimation()
         if let color = color {
@@ -71,7 +76,7 @@ class CustomButton: UIButton {
         self.addTapedAnimation()
         self.addShadow()
         self.layer.cornerRadius = height / 2
-        self.layer.borderColor = UIColor.imageBorder.cgColor
+        self.layer.borderColor = UIColor.imageBorder.resolvedColor(with: self.traitCollection).cgColor
         self.layer.borderWidth = 2
         self.imageView?.layer.cornerRadius = height / 2
         self.backgroundColor = .secondBackground
@@ -127,6 +132,4 @@ class CustomButton: UIButton {
             self.transform = .identity
         }
     }
-    
-    
 }

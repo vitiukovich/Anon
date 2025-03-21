@@ -12,14 +12,12 @@ class SignUpView: UIView, UITextFieldDelegate {
 
     private let viewModel: SignUpViewModel
     private let coordinator: LoginCoordinator
-    private let viewController: LoginViewController
+    private weak var viewController: LoginViewController?
     
     private let usernameTextField = UITextField()
     private let passwordTextField = UITextField()
     private let repeatPasswordTextField = UITextField()
     private let signUpButton = CustomButton()
-    
-    private let errorView = ErrorView()
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -39,6 +37,11 @@ class SignUpView: UIView, UITextFieldDelegate {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        print("deinit SignUpView")
+        cancellables.removeAll()
     }
     
     private func setupUI() {
@@ -94,9 +97,9 @@ class SignUpView: UIView, UITextFieldDelegate {
         viewModel.$signUpErrorMessage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] errorMessage in
-                guard let self = self else { return }
+                guard let vc = self?.viewController else { return }
                 guard let errorMessage = errorMessage else { return }
-                errorView.show(in: viewController.view, duration: 10, message: errorMessage)
+                ErrorView().show(in: vc.view, message: errorMessage)
             }
             .store(in: &cancellables)
         
@@ -121,10 +124,10 @@ class SignUpView: UIView, UITextFieldDelegate {
         
         signUpButton.addAction(UIAction { [weak self] _ in
             guard let self = self else { return }
-            viewModel.signUp { result in
+            self.viewModel.signUp { [weak self] result in
                 switch result {
                 case .success():
-                    self.coordinator.navigateToMainView()
+                    self?.coordinator.navigateToMainView()
                 case .failure(_):
                     break
                 }

@@ -8,24 +8,22 @@
 import UIKit
 
 class ErrorView: UIView {
-
-    private let label = UILabel()
     
-    init() {
-        super.init(frame: .zero)
-    }
+    static var activeErrorViews = [ErrorView]()
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupUI(message: String) {
+    func show(in view: UIView, duration: TimeInterval = 2.5, message: String, color: UIColor = .wrongValueTextField) {
         self.backgroundColor = .secondBackground
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOpacity = 0.05
+        self.layer.shadowOffset = CGSize(width: 0, height: 0)
+        self.layer.shadowRadius = 9
+        self.layer.masksToBounds = false
         self.layer.cornerRadius = 25
         self.clipsToBounds = true
         self.alpha = 0
         
-        label.setDefault(text: message, ofSize: 16, weight: .medium, color: .wrongValueTextField)
+        let label = UILabel()
+        label.setDefault(text: message, ofSize: 16, weight: .medium, color: color)
 
         self.addSubview(label)
 
@@ -35,20 +33,23 @@ class ErrorView: UIView {
             label.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
             label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -15)
         ])
-    }
-
-    func show(in view: UIView, duration: TimeInterval = 2.5, message: String) {
-        setupUI(message: message)
+        
         view.addSubview(self)
         self.translatesAutoresizingMaskIntoConstraints = false
         
+        
+        let lastErrorView = ErrorView.activeErrorViews.last
+        let topAnchorConstraint = lastErrorView?.bottomAnchor ?? view.safeAreaLayoutGuide.topAnchor
+        
         NSLayoutConstraint.activate([
             self.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            self.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            self.topAnchor.constraint(equalTo: topAnchorConstraint, constant: 5),
             self.widthAnchor.constraint(lessThanOrEqualToConstant: 300)
         ])
-
-        UIView.animate(withDuration: 0.3, animations: {
+        
+        ErrorView.activeErrorViews.append(self)
+        
+        UIView.animate(withDuration: 0.6, animations: {
             self.alpha = 1
         }) { _ in
             DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
@@ -58,10 +59,13 @@ class ErrorView: UIView {
     }
 
     func hide() {
-        UIView.animate(withDuration: 0.3, animations: {
+        UIView.animate(withDuration: 0.6, animations: {
             self.alpha = 0
         }) { _ in
             self.removeFromSuperview()
+            if let index = ErrorView.activeErrorViews.firstIndex(of: self) {
+                ErrorView.activeErrorViews.remove(at: index)
+            }
         }
     }
 }

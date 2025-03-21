@@ -17,15 +17,17 @@ class MainViewModel {
     @Published var newMessage: MessageDTO? = nil
     
     
-    var parentVC: MainViewController?
+    weak var parentVC: MainViewController?
     
     private var localContacts: [ContactDTO] = []
+    private var searchWorkItem: DispatchWorkItem?
+    private var cancellables = Set<AnyCancellable>()
+    
     private let coordinator: MainCoordinator
     private let contactManager = ContactManager.shared
     private let chatManager = ChatManager.shared
     private let currentUID: String! = UserManager.shared.currentUID
-    private var searchWorkItem: DispatchWorkItem?
-    private var cancellables = Set<AnyCancellable>()
+
     
     
 
@@ -37,19 +39,23 @@ class MainViewModel {
         fetchLocalChats()
         bindUserProfileImage()
     }
+    
+    deinit {
+        cancellables.removeAll()
+    }
 
     private func bindMessagesNotification() {
-        NotificationCenter.default.addObserver(forName: .newMessageSaved, object: nil, queue: .main) { [weak self] _ in
-            DispatchQueue.main.async {
+        NotificationCenter.default.publisher(for: .newMessageSaved)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
                 self?.fetchLocalChats()
-            }
-        }
+            } .store(in: &cancellables)
         
-        NotificationCenter.default.addObserver(forName: .newMessageReceived,
-                                               object: nil, queue: .main) { [weak self] notification in
-            guard let self = self else { return }
-
-            DispatchQueue.main.async {
+        NotificationCenter.default.publisher(for: .newMessageReceived)
+            .receive(on: DispatchQueue.main)
+            .sink{ [weak self] notification in
+                guard let self = self else { return }
+                
                 guard let message = notification.userInfo?["message"] as? MessageDTO else {
                     return
                 }
@@ -70,7 +76,7 @@ class MainViewModel {
                 }
                 self.newMessage = message
             }
-        }
+            .store(in: &cancellables)
     }
 
     private func bindUserProfileImage() {
@@ -87,7 +93,7 @@ class MainViewModel {
             .sorted(by: { $0.lastMessageDate > $1.lastMessageDate })
 
         DispatchQueue.main.async { [weak self] in
-            guard let self = self, let tableView = self.parentVC?.chatsTableView else { return }
+            guard let self, let tableView = self.parentVC?.chatsTableView else { return }
             tableView.updateChats(updatedChats)
         }
     }
