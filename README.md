@@ -1,11 +1,11 @@
-# 🕵️‍♂️ AnonChat X  
+# 􀺧 AnonChat X  
 
 **AnonChat X** is an iOS application for **anonymous messaging**.  
-This project was created as part of my iOS development learning journey and utilizes **Swift, UIKit, Firebase, and Realm**.  
+This project was created as part of my iOS development learning journey and utilizes **Swift, UIKit, Combine, Firebase, and Realm**.  
 
 ---
 
-## 🚀 Features  
+## 􁕍    Features  
 
 ✔️ User authentication and registration (Firebase)  
 ✔️ Send and receive anonymous messages (Firebace)
@@ -15,18 +15,18 @@ This project was created as part of my iOS development learning journey and util
 
 ---
 
-## 🛠️ Technologies Used  
+## 􀫊 Technologies Used  
 
 - **Language**: Swift  
 - **UI Framework**: UIKit  
 - **Database**: Realm, UserDefaults
 - **Backend**: Firebase (Authentication, Firestore, Realtime, Messaging, Functions)  
-- **Security**: CryptoKit, Keychan
+- **Security**: CryptoKit, Keychain
 - **Architecture**: MVVM + Combine  
 
 ---
 
-## 📸 Screenshots  
+## 􀌞 Screenshots  
 
 <div align="center">
 	<img src="Screenshots/mainDark.png" width="300">
@@ -44,7 +44,7 @@ This project was created as part of my iOS development learning journey and util
 
 ---
 
-## 🏗 Installation & Setup  
+## 􁥽 Installation & Setup  
 
 **1. Clone the repository:**  
 ```bash
@@ -79,21 +79,18 @@ Xcode should automatically resolve all dependencies, but if something is missing
 
 ---
 
-## 💡 Future Improvements
+## 􁷘 Future Improvements
 
-• Add files sender
-
-• Add themes
-
-• Add groops 
-
-• Add calls
+    • Add files sender
+    • Add themes
+    • Add groops 
+    • Add calls
 
 ---
 
-👤 Vitiukovich
+􀉩 Vitiukovich
 
-📧 Email: vitiukovich@icloud.com
+􀍕 Email: vitiukovich@icloud.com
 
-🔗 GitHub: https://github.com/vitiukovich
+􀉣 GitHub: https://github.com/vitiukovich
    
