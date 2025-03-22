@@ -34,7 +34,6 @@ class LoginViewController: UIViewController {
     }
     
     deinit {
-        print("deinit LoginViewController")
         cancellables.removeAll()
     }
     

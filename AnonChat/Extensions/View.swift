@@ -9,6 +9,17 @@ import UIKit
 
 extension UIView {
     
+    func recursiveSubviews<T: UIView>(of type: T.Type) -> [T] {
+        var result: [T] = []
+        for subview in subviews {
+            if let match = subview as? T {
+                result.append(match)
+            }
+            result.append(contentsOf: subview.recursiveSubviews(of: type))
+        }
+        return result
+    }
+    
     func setSubview(toView view: UIView) {
         self.backgroundColor = .secondBackground
         self.translatesAutoresizingMaskIntoConstraints = false

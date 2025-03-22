@@ -40,7 +40,6 @@ class SignUpView: UIView, UITextFieldDelegate {
     }
     
     deinit {
-        print("deinit SignUpView")
         cancellables.removeAll()
     }
     

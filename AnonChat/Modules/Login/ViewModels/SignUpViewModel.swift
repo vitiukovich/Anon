@@ -27,7 +27,6 @@ final class SignUpViewModel {
     }
     
     deinit {
-        print("deinit SignUpViewModel")
         cancellables.removeAll()
     }
     

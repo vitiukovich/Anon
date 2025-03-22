@@ -41,7 +41,6 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
     }
     
     deinit {
-        print("setting deinit")
         cancellables.removeAll()
     }
     

@@ -8,10 +8,20 @@
 import UIKit
 
 class ErrorView: UIView {
-    
-    static var activeErrorViews = [ErrorView]()
 
+    static func removeExisting(from root: UIView) {
+        root.recursiveSubviews(of: ErrorView.self).forEach { existing in
+            UIView.animate(withDuration: 0.2, animations: {
+                existing.alpha = 0
+            }, completion: { _ in
+                existing.removeFromSuperview()
+            })
+        }
+    }
+    
     func show(in view: UIView, duration: TimeInterval = 2.5, message: String, color: UIColor = .wrongValueTextField) {
+        ErrorView.removeExisting(from: view)
+        
         self.backgroundColor = .secondBackground
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOpacity = 0.05
@@ -20,6 +30,7 @@ class ErrorView: UIView {
         self.layer.masksToBounds = false
         self.layer.cornerRadius = 25
         self.clipsToBounds = true
+        self.translatesAutoresizingMaskIntoConstraints = false
         self.alpha = 0
         
         let label = UILabel()
@@ -35,19 +46,13 @@ class ErrorView: UIView {
         ])
         
         view.addSubview(self)
-        self.translatesAutoresizingMaskIntoConstraints = false
         
-        
-        let lastErrorView = ErrorView.activeErrorViews.last
-        let topAnchorConstraint = lastErrorView?.bottomAnchor ?? view.safeAreaLayoutGuide.topAnchor
-        
+
         NSLayoutConstraint.activate([
             self.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            self.topAnchor.constraint(equalTo: topAnchorConstraint, constant: 5),
-            self.widthAnchor.constraint(lessThanOrEqualToConstant: 300)
+            self.widthAnchor.constraint(lessThanOrEqualToConstant: 300),
+            topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
         ])
-        
-        ErrorView.activeErrorViews.append(self)
         
         UIView.animate(withDuration: 0.6, animations: {
             self.alpha = 1
@@ -63,9 +68,6 @@ class ErrorView: UIView {
             self.alpha = 0
         }) { _ in
             self.removeFromSuperview()
-            if let index = ErrorView.activeErrorViews.firstIndex(of: self) {
-                ErrorView.activeErrorViews.remove(at: index)
-            }
         }
     }
 }

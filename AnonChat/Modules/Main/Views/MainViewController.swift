@@ -39,7 +39,6 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     }
     
     deinit {
-        print("MainViewController deinitialized")
         cancellables.removeAll()
     }
     

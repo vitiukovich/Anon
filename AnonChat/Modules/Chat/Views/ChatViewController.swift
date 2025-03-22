@@ -50,7 +50,6 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         setupUI()
         bindViewModel()
         addKeyboardObservers()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -72,7 +71,11 @@ class ChatViewController: UIViewController, UITextViewDelegate {
     }
     
     deinit {
+#if DEBUG
+        debugPrint("💥 deinit ChatViewController")
+#endif
         cancellables.removeAll()
+
     }
     
     private func setupUI() {

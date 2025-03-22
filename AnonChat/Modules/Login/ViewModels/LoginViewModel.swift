@@ -21,7 +21,6 @@ final class LoginViewModel {
     private var cancellables = Set<AnyCancellable>()
     
     deinit {
-        print("deinit LoginViewModel")
         cancellables.removeAll()
     }
     

@@ -44,7 +44,6 @@ class LoginView: UIView, UITextFieldDelegate {
     }
     
     deinit {
-        print("deinit LoginView")
         cancellables.removeAll()
     }
     
