@@ -51,8 +51,8 @@ class ChatsTableView: UITableView, UITableViewDelegate {
                         cell.profileImage.setImageWithLabel(imageName: contact.profileImage,
                                                             text: contact.username.first?.uppercased() ?? "")
                     }
-                case .failure:
-                    break
+                case .failure(let error):
+                    Logger.log(error.localizedDescription, level: .error)
                 }
             }
             return cell
@@ -120,8 +120,8 @@ class ChatsTableView: UITableView, UITableViewDelegate {
                 case .success(let contact):
                     self?.parentVC?.coordinator.showChat(for: contact)
                     tableView.deselectRow(at: indexPath, animated: true)
-                case .failure(_):
-                    break
+                case .failure(let error):
+                    Logger.log(error.localizedDescription, level: .error)
                 }
             }
         }

@@ -89,7 +89,8 @@ final class SettingCoordinator {
                 navigationController.popViewController(animated: true)
                 coordinator.start(contact: contact)
                 
-            case .failure(_): break
+            case .failure(let error):
+                Logger.log(error.localizedDescription, level: .error)
             }
         })
     }

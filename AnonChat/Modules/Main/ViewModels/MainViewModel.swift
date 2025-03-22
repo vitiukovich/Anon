@@ -71,7 +71,7 @@ class MainViewModel {
                         }
                         
                         notification.show()
-                    case .failure(_): break
+                    case .failure(let error): Logger.log(error.localizedDescription, level: .error)
                     }
                 }
                 self.newMessage = message
@@ -121,8 +121,8 @@ class MainViewModel {
                     switch result {
                     case .success(let contacts):
                         self.parentVC?.contactsTableView.updateContacts(network: contacts, local: sortedLocalContacts, isSearching: true)
-                    case .failure(_):
-                        break
+                    case .failure(let error):
+                        Logger.log(error.localizedDescription, level: .error)
                     }
                 }
             }

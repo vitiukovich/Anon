@@ -46,6 +46,7 @@ final class LoginViewModel {
                     }
                     completion(.failure(error))
                     self?.isLoginSuccessful = false
+                    Logger.log(error.localizedDescription, level: .error)
                 }
             }
         }

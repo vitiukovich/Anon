@@ -218,7 +218,10 @@ class ChatViewController: UIViewController, UITextViewDelegate {
                     textView.isButtonActive(false)
                     textView.text = ""
                     textView.delegate?.textViewDidChange?(self.textView)
-                case .failure(_): textView.showLoadingOnButton(false)
+                case .failure(let error):
+                    Logger.log(error.localizedDescription, level: .error)
+                    textView.showLoadingOnButton(false)
+                    ErrorView().show(in: view, message: error.localizedDescription)
                 }
             }
             

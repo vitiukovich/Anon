@@ -140,6 +140,7 @@ class ImagePickerViewController: UIViewController {
                     coordinator.dismiss(vc: self)
                     self.showLoadingOnButton(false)
                 case .failure(let error):
+                    Logger.log(error.localizedDescription, level: .error)
                     ErrorView().show(in: self.view, message: error.localizedDescription)
                     self.showLoadingOnButton(false)
                     

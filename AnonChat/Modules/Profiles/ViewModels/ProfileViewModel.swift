@@ -81,6 +81,7 @@ final class ProfileViewModel {
                     isContactBlocked = false
                 case .failure(let error):
                     errorMessage = error.localizedDescription
+                    Logger.log(error.localizedDescription, level: .error)
                 }
             }
         } else {
@@ -91,6 +92,7 @@ final class ProfileViewModel {
                     isContactBlocked = true
                 case .failure(let error):
                     errorMessage = error.localizedDescription
+                    Logger.log(error.localizedDescription, level: .error)
                 }
             }
         }

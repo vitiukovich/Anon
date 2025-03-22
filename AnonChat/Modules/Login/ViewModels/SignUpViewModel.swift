@@ -41,7 +41,7 @@ final class SignUpViewModel {
                 self.checkUsernameAvailability(completion: { result in
                     switch result {
                     case .success(let value): self.isUsernameAvailable = value
-                    case .failure: break
+                    case .failure(let error): Logger.log(error.localizedDescription, level: .error)
                     }
                 })
             }

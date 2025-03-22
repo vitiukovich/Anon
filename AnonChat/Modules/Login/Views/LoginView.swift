@@ -125,9 +125,10 @@ class LoginView: UIView, UITextFieldDelegate {
             self?.viewModel.login { result in
                 switch result {
                 case .success: break
-                case .failure(_):
+                case .failure(let error):
                     self?.loginUsername.isAvailableValue(false)
                     self?.loginPassword.isAvailableValue(false)
+                    Logger.log(error.localizedDescription, level: .error)
                 }
             }
         }, for: .touchUpInside)

@@ -77,7 +77,7 @@ final class NetworkMessageService {
 
                         self.databaseRef.child("messages").child(userID).child(id).removeValue()
                     }
-                case .failure(_): break
+                case .failure(let error): Logger.log(error.localizedDescription, level: .error)
                 }
             }
             

@@ -31,7 +31,7 @@ final class AuthService {
             }
             
             guard let userID = result?.user.uid else {
-                completion(.failure(NSError(domain: "AuthService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve user ID"])))
+                completion(.failure(NSError(domain: "AuthService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Incorrect login or password"])))
                 return
             }
             completion(.success(userID))

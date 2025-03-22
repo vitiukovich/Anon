@@ -62,6 +62,7 @@ final class SettingViewModel {
             case .success(let contacts):
                 coordinator.showBlockedUsers(contacts: contacts)
             case .failure(let error):
+                Logger.log(error.localizedDescription, level: .error)
                 alertMessage = error.localizedDescription
             }
         }
@@ -74,6 +75,7 @@ final class SettingViewModel {
             case .success():
                 alertMessage = "Device data cleared successfully."
             case .failure(let error):
+                Logger.log(error.localizedDescription, level: .error)
                 alertMessage = error.localizedDescription
             }
         }
@@ -84,7 +86,9 @@ final class SettingViewModel {
             guard let self else { return }
             switch result {
             case .success: coordinator.logout()
-            case .failure(let error): alertMessage = error.localizedDescription
+            case .failure(let error):
+                Logger.log(error.localizedDescription, level: .error)
+                alertMessage = error.localizedDescription
             }
         }
     }
@@ -94,8 +98,8 @@ final class SettingViewModel {
         UserManager.shared.logoutUser { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .failure(_):
-                break
+            case .failure(let error):
+                Logger.log(error.localizedDescription, level: .error)
             case .success:
                 coordinator.logout()
             }

@@ -135,7 +135,7 @@ final class UserService {
                 UserService.shared.updateCurrentUserData(userID: currentUID, fcmToken: token, completion: { result in
                     switch result {
                     case .success: break
-                    case .failure(_): break
+                    case .failure(let error): Logger.log(error.localizedDescription, level: .error)
                     }
                 })
             }

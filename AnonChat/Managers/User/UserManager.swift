@@ -169,8 +169,8 @@ final class UserManager {
             switch result {
             case .success():
                 break
-            case .failure(_):
-                break
+            case .failure(let error):
+                Logger.log(error.localizedDescription, level: .error)
             }
         }
     }
