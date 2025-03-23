@@ -28,9 +28,9 @@ exports.sendNewMessageNotification = onValueCreated(
 
       let notificationBody = "[Новое сообщение]";
       if (messageData.text) {
-        notificationBody = "💬 Новое сообщение";
+        notificationBody = "Новое сообщение";
       } else if (messageData.imageUrl) {
-        notificationBody = "📷 Изображение";
+        notificationBody = "Изображение";
       }
 
       const message = {

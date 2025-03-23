@@ -1,5 +1,5 @@
 //
-//  KaychainManager.swift
+//  KeychainManager.swift
 //  AnonChat
 //
 //  Created by Stanislav Vitiuk on 1/25/25.
