@@ -9,19 +9,19 @@ import UIKit
 
 final class SettingCoordinator {
     
-    private let navigationController: UINavigationController
+    private weak var navigationController: UINavigationController?
     private lazy var openProfile: (ContactDTO) -> Void = { [weak self] contact in
         self?.showProfile(contact: contact)
     }
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController?) {
         self.navigationController = navigationController
     }
     
     func start() {
         let viewModel = SettingViewModel(coordinator: self)
         let profileSettingVC = SettingViewController(viewModel: viewModel, coordinator: self)
-        navigationController.pushViewController(profileSettingVC, animated: true)
+        navigationController?.pushViewController(profileSettingVC, animated: true)
     }
     
     func showLogOutAlert(vc: UIViewController, action: UIAction) {
@@ -32,13 +32,6 @@ final class SettingCoordinator {
     }
     
     func logout(){
-        
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let navigationController = window.rootViewController as? UINavigationController {
-            navigationController.viewControllers.removeAll()
-        }
-        
         DispatchQueue.main.async {
             let coordinator = LoginCoordinator()
             coordinator.resetAppToLoginScreen()
@@ -51,14 +44,14 @@ final class SettingCoordinator {
     }
     
     func back() {
-        navigationController.popViewController(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     func showBlockedUsers(contacts: [ContactDTO]) {
         let vc = BlockListViewController(contacts, coordinator: self, openProfile: openProfile)
         vc.modalPresentationStyle = .overFullScreen
         
-        navigationController.viewControllers.last?.present(vc, animated: true)
+        navigationController?.viewControllers.last?.present(vc, animated: true)
     }
     
     func showDeleteAccountConfirmation(vc: UIViewController, action: UIAction) {
@@ -86,7 +79,7 @@ final class SettingCoordinator {
             switch result {
             case .success(let contact):
                 let coordinator = ChatCoordinator(navigationController: navigationController)
-                navigationController.popViewController(animated: true)
+                navigationController?.popViewController(animated: true)
                 coordinator.start(contact: contact)
                 
             case .failure(let error):

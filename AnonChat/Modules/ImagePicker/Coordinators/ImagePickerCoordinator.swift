@@ -14,13 +14,13 @@ protocol ImagePickerCoordinatorDelegate: AnyObject {
 
 final class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate, PHPickerViewControllerDelegate  {
     
-    private let navigationController: UINavigationController!
+    private weak var navigationController: UINavigationController?
     
     weak var delegate: ImagePickerCoordinatorDelegate?
     weak var viewModel: ImagePickerViewModel?
     
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController?) {
         self.navigationController = navigationController
     }
         
@@ -29,7 +29,7 @@ final class ImagePickerCoordinator: NSObject, UINavigationControllerDelegate, UI
         self.viewModel = strongViewModel
         let viewController = ImagePickerViewController(viewModel: strongViewModel, coordinator: self)
         viewController.modalPresentationStyle = .fullScreen
-        navigationController.present(viewController, animated: true)
+        navigationController?.present(viewController, animated: true)
     }
     
     func dismiss(vc: UIViewController) {

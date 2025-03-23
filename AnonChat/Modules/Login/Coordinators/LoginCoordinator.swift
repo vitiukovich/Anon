@@ -8,7 +8,6 @@
 import UIKit
 
 class LoginCoordinator {
-    
     func start(in window: UIWindow) {
         let loginVC = LoginViewController( coordinator: self)
         window.rootViewController = loginVC
@@ -18,7 +17,6 @@ class LoginCoordinator {
     
     func navigateToMainView() {
         let navigationController = UINavigationController()
-        
         let coordinator = MainCoordinator(navigationController: navigationController)
         let viewModel = MainViewModel(coordinator: coordinator)
         let viewController = MainViewController(viewModel: viewModel, coordinator: coordinator)

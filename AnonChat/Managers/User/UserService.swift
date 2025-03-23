@@ -101,7 +101,7 @@ final class UserService {
         }
     }
     
-    func deleteCurrentUser(completion: @escaping (Result<Void, Error>) -> Void) {
+    func deleteUserInFirestore(completion: @escaping (Result<Void, Error>) -> Void) {
         guard let uid = UserManager.shared.currentUID else { return }
         
         var updatedData: [String: Any] = [:]
@@ -176,6 +176,8 @@ final class UserService {
             for url in realmURLs {
                 try FileManager.default.removeItem(at: url)
             }
-        } catch { }
+        } catch {
+            Logger.log(error.localizedDescription, level: .error)
+        }
     }
 }

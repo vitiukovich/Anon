@@ -38,8 +38,8 @@ final class LoginViewModel {
                     self?.isLoginSuccessful = true
                     self?.loginErrorMessage = nil
                 case .failure(let error):
-                    if (error as NSError).code == AuthErrorCode.wrongPassword.rawValue ||
-                       (error as NSError).code == AuthErrorCode.userNotFound.rawValue {
+                    if (error as NSError).code == AuthErrorCode.wrongPassword.code.rawValue ||
+                        (error as NSError).code == AuthErrorCode.userNotFound.code.rawValue {
                         self?.loginErrorMessage = "Incorrect login or password!"
                     } else {
                         self?.loginErrorMessage = error.localizedDescription

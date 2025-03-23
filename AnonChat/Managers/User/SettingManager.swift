@@ -33,37 +33,74 @@ class SettingManager {
     
     
     func deleteCurrentUser(completion: @escaping (Result<Void, Error>) -> Void) {
+        let timeoutSeconds: TimeInterval = 10.0
         let dispatchGroup = DispatchGroup()
-        var lastError: Error?
+        var firstError: Error? = nil
+        var didComplete = false
+        let lock = NSLock()
 
-        dispatchGroup.enter()
-        UserService.shared.deleteCurrentUser { result in
-            if case .failure(let error) = result { lastError = error }
-            dispatchGroup.leave()
+        func safeComplete(_ result: Result<Void, Error>) {
+            lock.lock()
+            defer { lock.unlock() }
+            guard !didComplete else { return }
+            didComplete = true
+            completion(result)
         }
         
         dispatchGroup.enter()
-        clearRealmData { _ in
+        UserService.shared.deleteUserInFirestore { result in
+            switch result {
+            case .success(): break
+            case .failure(let error):
+                firstError = error
+                Logger.log(error.localizedDescription, level: .error)
+            }
             dispatchGroup.leave()
         }
+
+        dispatchGroup.enter()
+        clearRealmData() { result in
+            switch result {
+            case .success(): break
+            case .failure(let error):
+                if firstError == nil {
+                    firstError = error
+                }
+                Logger.log(error.localizedDescription, level: .error)
+            }
+            dispatchGroup.leave()
+        }
+            
+        
 
         dispatchGroup.enter()
         AuthService.shared.deleteUser { result in
-            if case .failure(let error) = result { lastError = error }
+            switch result {
+            case .success(): break
+            case .failure(let error):
+                if firstError == nil {
+                    firstError = error
+                }
+                Logger.log(error.localizedDescription, level: .error)
+            }
             dispatchGroup.leave()
         }
-        
+
         dispatchGroup.enter()
         clearUserDefaults {
             dispatchGroup.leave()
         }
 
         dispatchGroup.notify(queue: .main) {
-            if let error = lastError {
-                completion(.failure(error))
+            if let firstError = firstError {
+                safeComplete(.failure(firstError))
             } else {
-                completion(.success(()))
+                safeComplete(.success(()))
             }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + timeoutSeconds) {
+            safeComplete(.failure((firstError ?? NSError(domain: "DeleteUserError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Time exceeded"]))))
         }
     }
     

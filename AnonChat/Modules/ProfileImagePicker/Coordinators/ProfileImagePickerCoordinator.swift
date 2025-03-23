@@ -8,19 +8,19 @@
 import UIKit
 
 final class ProfileImagePickerCoordinator {
-    private let navigationController: UINavigationController
+    private weak var navigationController: UINavigationController?
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController?) {
         self.navigationController = navigationController
     }
     
     func start() {
         let viewModel = ProfileImagePickerViewModel()
         let viewController = ProfileImagePickerViewController(viewModel: viewModel, coordinator: self)
-        guard navigationController.view.window != nil else {
+        guard navigationController?.view.window != nil else {
             return
         }
         viewController.modalPresentationStyle = .overFullScreen
-        navigationController.present(viewController, animated: true)
+        navigationController?.present(viewController, animated: true)
     }
 }

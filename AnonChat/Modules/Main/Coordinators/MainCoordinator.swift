@@ -8,10 +8,15 @@
 import UIKit
 
 class MainCoordinator {
-    private let navigationController: UINavigationController
+    
+    private weak var navigationController: UINavigationController?
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController?) {
         self.navigationController = navigationController
+    }
+    
+    deinit {
+        Logger.log("MainCoordinator deinit", level: .debug)
     }
 
     func showProfile(for contact: ContactDTO) {

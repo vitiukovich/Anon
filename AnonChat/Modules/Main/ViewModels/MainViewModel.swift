@@ -16,14 +16,13 @@ class MainViewModel {
     @Published var profileImage: String = ""
     @Published var newMessage: MessageDTO? = nil
     
-    
-    weak var parentVC: MainViewController?
-    
+    weak var mainVC: MainViewController?
     private var localContacts: [ContactDTO] = []
     private var searchWorkItem: DispatchWorkItem?
     private var cancellables = Set<AnyCancellable>()
+    private weak var coordinator: MainCoordinator?
     
-    private let coordinator: MainCoordinator
+    
     private let contactManager = ContactManager.shared
     private let chatManager = ChatManager.shared
     private let currentUID: String! = UserManager.shared.currentUID
@@ -41,6 +40,7 @@ class MainViewModel {
     }
     
     deinit {
+        Logger.log("MainViewModel deinit", level: .debug)
         cancellables.removeAll()
     }
 
@@ -63,11 +63,12 @@ class MainViewModel {
                     self.isNewMassage = true
                     return
                 }
-                self.contactManager.fetchContact(byUID: message.senderID) { result in
+                self.contactManager.fetchContact(byUID: message.senderID) { [weak self] result in
                     switch result {
                     case .success(let contact):
                         let notification = MessageNotificationView(sender: contact.username, message: message.text ?? "", image: contact.profileImage) {
-                            self.coordinator.showChat(for: contact)
+                            guard let coordinator = self?.coordinator else { return }
+                            coordinator.showChat(for: contact)
                         }
                         
                         notification.show()
@@ -93,7 +94,7 @@ class MainViewModel {
             .sorted(by: { $0.lastMessageDate > $1.lastMessageDate })
 
         DispatchQueue.main.async { [weak self] in
-            guard let self, let tableView = self.parentVC?.chatsTableView else { return }
+            guard let self, let tableView = self.mainVC?.chatsTableView else { return }
             tableView.updateChats(updatedChats)
         }
     }
@@ -102,7 +103,7 @@ class MainViewModel {
         localContacts = contactManager.fetchLocalContacts().sorted { $0.username < $1.username }
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            self.parentVC?.contactsTableView.updateContacts(network: [], local: self.localContacts, isSearching: false)
+            self.mainVC?.contactsTableView.updateContacts(network: [], local: localContacts, isSearching: false)
         }
     }
     
@@ -120,7 +121,7 @@ class MainViewModel {
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let contacts):
-                        self.parentVC?.contactsTableView.updateContacts(network: contacts, local: sortedLocalContacts, isSearching: true)
+                        self.mainVC?.contactsTableView.updateContacts(network: contacts, local: sortedLocalContacts, isSearching: true)
                     case .failure(let error):
                         Logger.log(error.localizedDescription, level: .error)
                     }

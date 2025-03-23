@@ -8,9 +8,9 @@
 import UIKit
 
 final class ChatCoordinator {
-    private let navigationController: UINavigationController
+    private weak var navigationController: UINavigationController?
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController?) {
         self.navigationController = navigationController
     }
     
@@ -18,17 +18,17 @@ final class ChatCoordinator {
         let viewModel = ChatViewModel(contact: contact)
         let viewController = ChatViewController(viewModel: viewModel, coordinator: self, contact: contact)
         viewController.hidesBottomBarWhenPushed = true
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController?.pushViewController(viewController, animated: true)
     }
     
     func back() {
-        navigationController.popViewController(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     func showProfile(contact: ContactDTO) {
-        if let previousVC = navigationController.viewControllers.dropLast().last,
+        if let previousVC = navigationController?.viewControllers.dropLast().last,
            previousVC is ProfileViewController {
-            navigationController.popViewController(animated: true)
+            navigationController?.popViewController(animated: true)
         } else {
             let coordinator = ProfileCoordinator(navigationController: navigationController)
             coordinator.start(contact: contact)

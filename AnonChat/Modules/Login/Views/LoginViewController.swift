@@ -58,9 +58,6 @@ class LoginViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let index = navigationController?.viewControllers.firstIndex(of: self) {
-            navigationController?.viewControllers.remove(at: index)
-        }
     }
     
     private func setupUI() {

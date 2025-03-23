@@ -85,7 +85,9 @@ final class SettingViewModel {
         SettingManager.shared.deleteCurrentUser { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success: coordinator.logout()
+            case .success():
+                Logger.log("Delete account successfully", level: .debug)
+                coordinator.logout()
             case .failure(let error):
                 Logger.log(error.localizedDescription, level: .error)
                 alertMessage = error.localizedDescription

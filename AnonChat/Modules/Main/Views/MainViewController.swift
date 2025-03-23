@@ -125,7 +125,7 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     }
     
     private func bindViewModel() {
-        viewModel.parentVC = self
+        viewModel.mainVC = self
         
         viewModel.$profileImage
             .removeDuplicates()
@@ -146,8 +146,8 @@ class MainViewController: UIViewController, UISearchBarDelegate {
         }, for: .touchUpInside)
         
         profileButton.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            self.coordinator.showProfileSetting()
+            guard let coordinator = self?.coordinator else { return }
+            coordinator.showProfileSetting()
         }, for: .touchUpInside)
         
     }
