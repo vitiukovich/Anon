@@ -71,9 +71,6 @@ class ChatViewController: UIViewController, UITextViewDelegate {
     }
     
     deinit {
-#if DEBUG
-        debugPrint("💥 deinit ChatViewController")
-#endif
         cancellables.removeAll()
 
     }

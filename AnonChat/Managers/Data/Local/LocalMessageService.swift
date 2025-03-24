@@ -17,6 +17,7 @@ final class LocalMessageService {
         try realm.write {
             chat.addIncomingMessage(message)
         }
+        NotificationCenter.default.post(name: .newMessageSaved, object: nil)
 
     }
 

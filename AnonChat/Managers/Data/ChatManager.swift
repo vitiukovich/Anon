@@ -16,9 +16,7 @@ final class ChatManager {
     private let networkService = NetworkChatService.shared
 
     func loadAllChats(for uid: String) -> [ChatDTO] {
-       
-        return localService.loadAllChats(for: uid).map { $0.toDTO() }.sorted { $0.lastMessageDate > $1.lastMessageDate }
-        
+        localService.loadAllChats(for: uid).map { $0.toDTO() }.sorted { $0.lastMessageDate > $1.lastMessageDate }
     }
 
     func getOrCreateChat(for currentUID: String, with userID: String) -> Chat? {
@@ -26,24 +24,36 @@ final class ChatManager {
             let result = try localService.getOrCreateChat(contactID: userID, currentUID: currentUID)
             return result
         } catch {
+            Logger.log("Error while getting or creating chat: \(error.localizedDescription)", level: .error)
             return nil
         }
     }
     
-    func deleteChat(_ chat: ChatDTO, forEveryone: Bool) throws {
-        try localService.deleteChat(forContactID: chat.contactID)
-
+    func deleteChat(_ chat: ChatDTO, forEveryone: Bool) {
+        do {
+            try localService.deleteChat(forContactID: chat.contactID)
+        } catch {
+            Logger.log("Error while deleting chat: \(error.localizedDescription)", level: .error)
+        }
         if forEveryone {
             networkService.sendDeleteChatSignal(chat)
         }
     }
     
-    func deleteChat(forContactID: String) throws {
-        try localService.deleteChat(forContactID: forContactID)
+    func deleteChat(forContactID: String) {
+        do {
+            try localService.deleteChat(forContactID: forContactID)
+        } catch {
+            Logger.log("Error while deleting chat: \(error.localizedDescription)", level: .error)
+        }
     }
     
-    func deleteMessagesFromChat(forContactID: String) throws {
-        try localService.deleteMessagesFromChat(forContactID: forContactID)
+    func deleteMessagesFromChat(forContactID: String) {
+        do {
+            try localService.deleteMessagesFromChat(forContactID: forContactID)
+        } catch {
+            Logger.log("Error while deleting messages from chat: \(error.localizedDescription)", level: .error)
+        }
     }
 
     func startListeningForDeleteChatSignal(for uid: String) {
@@ -51,7 +61,7 @@ final class ChatManager {
     }
 
     func fetchChatImagesFromRealm(with contactID: String) -> [UIImage] {
-        return localService.fetchChatImagesFromRealm(with: contactID)
+        localService.fetchChatImagesFromRealm(with: contactID)
     }
     
     func stopListeningForDeleteChatSignal() {

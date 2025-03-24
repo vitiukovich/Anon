@@ -17,7 +17,7 @@ final class ContactManager {
     private let networkService =  NetworkContactService.shared
 
     func fetchLocalContacts() -> [ContactDTO] {
-        return localService.fetchContacts().map { $0.toDTO() }
+        localService.fetchContacts().map { $0.toDTO() }
     }
     
     func fetchContact(byUID: String, completion: @escaping (Result<ContactDTO, Error>) -> Void) {
@@ -29,14 +29,14 @@ final class ContactManager {
     }
 
     func saveContact(_ contact: ContactDTO) -> Result<Void, Error>  {
-        return localService.saveContact(contact.toContact())
+        localService.saveContact(contact.toContact())
     }
 
     func deleteContact(_ contact: ContactDTO) -> Result<Void, Error>  {
-        return localService.deleteContact(byUsername: contact.username)
+        localService.deleteContact(byUsername: contact.username)
     }
     
     func isContactExists(username: String) -> Bool {
-        return localService.isContactExists(username: username)
+        localService.isContactExists(username: username)
     }
 }

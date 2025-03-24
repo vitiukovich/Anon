@@ -20,13 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         self.window = window
         
-        if let uid = Auth.auth().currentUser?.uid,
-           uid == UserManager.shared.currentUID,
-           UserDefaults.standard.bool(forKey: "isRememberMeSelected") {
-            MessageManager.shared.startListeningForMessages(for: uid)
-            NetworkMessageService.shared.listenForDeleteRequests(for: uid)
-            ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
-            NetworkChatService.shared.startListeningForDeleteTimer(for: uid)
+        if isBindCurrentUser() {
             showMainScreen()
         } else {
             showLoginScreen()
@@ -39,7 +33,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
     }
     
-    func showMainScreen() {
+    private func isBindCurrentUser() -> Bool {
+        if let uid = Auth.auth().currentUser?.uid,
+           uid == UserManager.shared.currentUID,
+           UserDefaults.standard.bool(forKey: "isRememberMeSelected") {
+            MessageManager.shared.startListeningForMessages(for: uid)
+            NetworkMessageService.shared.listenForDeleteRequests(for: uid)
+            ChatManager.shared.startListeningForDeleteChatSignal(for: uid)
+            NetworkChatService.shared.startListeningForDeleteTimer(for: uid)
+            ContactUpdater.shared.stopPeriodicUpdate()
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    private func showMainScreen() {
         let navVC = UINavigationController()
         let coordinator = MainCoordinator(navigationController: navVC)
         let mainVM = MainViewModel(coordinator: coordinator)
@@ -50,7 +59,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navVC
     }
 
-    func showLoginScreen() {
+    private func showLoginScreen() {
         let navVC = UINavigationController()
         let coordinator = LoginCoordinator()
         let loginVC = LoginViewController(coordinator: coordinator)
@@ -60,6 +69,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navVC
     }
 
+    
     func sceneDidDisconnect(_ scene: UIScene) {}
 
     func sceneDidBecomeActive(_ scene: UIScene) {}

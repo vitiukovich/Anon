@@ -50,7 +50,6 @@ class MainViewController: UIViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        chatsTableView.reloadData()
         viewModel.fetchLocalContacts()
         viewModel.fetchLocalChats()
     }

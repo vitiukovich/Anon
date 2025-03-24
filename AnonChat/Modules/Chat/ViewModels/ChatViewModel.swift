@@ -42,9 +42,7 @@ final class ChatViewModel {
     }
     
     deinit {
-#if DEBUG
-        debugPrint("💥 deinit ChatViewModel")
-#endif
+        chat.markAsRead()
         messagesToken?.invalidate()
         messagesToken = nil
         cancellables.removeAll()

@@ -120,31 +120,13 @@ final class UserManager {
                     guard let self else { return }
                     switch result {
                     case .success:
-                        self.userService.resetRealm()
-                        self.user = nil
-                        self.currentUID = nil
-                        
-                        NetworkMessageService.shared.stopListeningForDeleteRequests()
-                        MessageManager.shared.stopListeningForMessages()
-                        ChatManager.shared.stopListeningForDeleteChatSignal()
-                        NetworkChatService.shared.stopListeningForDeleteTimer()
-                        
-                        UserDefaults.standard.removeObject(forKey: "currentUID")
-                        UserDefaults.standard.removeObject(forKey: "profileImage")
-                        UserDefaults.standard.removeObject(forKey: "username")
-                        UserDefaults.standard.removeObject(forKey: "publicKey")
-                        UserDefaults.standard.removeObject(forKey: "status")
-                        self.profileImage = ""
-                        
+                        unbindUserData()
                         completion(.success(()))
                         
                     case .failure(let error):
                         completion(.failure(error))
                     }
                 }
-                
-                
-                
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -163,6 +145,8 @@ final class UserManager {
         userService.isUsernameAvailable(username: username, completion: completion)
     }
     
+    //MARK: Helpers
+    
     private func checkKey(for userID: String) {
         let encryptionManager = EncryptionManager(userID: userID)
         encryptionManager.checkAndUploadKey { result in
@@ -173,5 +157,24 @@ final class UserManager {
                 Logger.log(error.localizedDescription, level: .error)
             }
         }
+    }
+    
+    private func unbindUserData() {
+        self.userService.resetRealm()
+        self.user = nil
+        self.currentUID = nil
+        
+        NetworkMessageService.shared.stopListeningForDeleteRequests()
+        MessageManager.shared.stopListeningForMessages()
+        ChatManager.shared.stopListeningForDeleteChatSignal()
+        NetworkChatService.shared.stopListeningForDeleteTimer()
+        ContactUpdater.shared.stopPeriodicUpdate()
+        
+        UserDefaults.standard.removeObject(forKey: "currentUID")
+        UserDefaults.standard.removeObject(forKey: "profileImage")
+        UserDefaults.standard.removeObject(forKey: "username")
+        UserDefaults.standard.removeObject(forKey: "publicKey")
+        UserDefaults.standard.removeObject(forKey: "status")
+        self.profileImage = ""
     }
 }
