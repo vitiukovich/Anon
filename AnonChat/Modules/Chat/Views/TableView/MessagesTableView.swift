@@ -37,11 +37,11 @@ class MessagesTableView: UITableView, UITableViewDelegate {
         
         self.register(MessagesTableViewCell.self, forCellReuseIdentifier: "MessagesCell")
 
-        diffableDataSource = UITableViewDiffableDataSource<Section, MessageDTO>(tableView: self) { tableView, indexPath, message in
+        diffableDataSource = UITableViewDiffableDataSource<Section, MessageDTO>(tableView: self) { [weak parentView, weak self] tableView, indexPath, message in
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesCell", for: indexPath) as! MessagesTableViewCell
             cell.transform = CGAffineTransform(rotationAngle: .pi)
             cell.configure(message: message, imageTapHandler: { [weak self] image in
-                guard let self = self, let parentView = parentView else { return }
+                guard let self, let parentView = parentView else { return }
                 parentView.showImage(image: image)
             }, deleteMessageHandler: { [weak self] message in
                 guard let self,
@@ -78,6 +78,12 @@ class MessagesTableView: UITableView, UITableViewDelegate {
             let indexPath = IndexPath(row: 0, section: 0)
             self.scrollToRow(at: indexPath, at: .top, animated: true)
         }
+    }
+    
+    func cleanUp() {
+        self.delegate = nil
+        self.dataSource = nil
+        self.diffableDataSource = nil
     }
 
     //MARK: Delegate

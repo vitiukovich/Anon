@@ -45,6 +45,11 @@ class ChatViewController: UIViewController, UITextViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        cancellables.removeAll()
+        tableView.cleanUp()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -68,11 +73,6 @@ class ChatViewController: UIViewController, UITextViewDelegate {
             cancellables.removeAll()
             viewModel = nil
         }
-    }
-    
-    deinit {
-        cancellables.removeAll()
-
     }
     
     private func setupUI() {

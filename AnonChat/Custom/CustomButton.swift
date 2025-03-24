@@ -84,7 +84,7 @@ class CustomButton: UIButton {
         self.titleLabel?.font = .systemFont(ofSize: 24, weight: .medium)
         self.translatesAutoresizingMaskIntoConstraints = false
         
-        if let profileImage = UIImage(named: user.profileImage), !user.profileImage.isEmpty {
+        if user.profileImage != "", let profileImage = UIImage(named: user.profileImage) {
             self.setImage(profileImage, for: .normal)
             self.setTitle(nil, for: .normal)
             

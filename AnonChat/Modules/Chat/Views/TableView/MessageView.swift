@@ -10,7 +10,6 @@ import UIKit
 final class MessageView: UIView {
     
     var onImageTap: ((UIImage) -> Void)?
-    var onFileTap: ((Data, String) -> Void)?
     
     private let imageView = UIImageView()
     private let messageLabel = UILabel()
