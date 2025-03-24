@@ -70,7 +70,12 @@ struct EncryptionManager {
     
     func getPublicKeyFromString(_ keyString: String) -> P256.KeyAgreement.PublicKey? {
         guard let keyData = Data(base64Encoded: keyString) else { return nil }
-        return try? P256.KeyAgreement.PublicKey(rawRepresentation: keyData)
+        do {
+            return try P256.KeyAgreement.PublicKey(rawRepresentation: keyData)
+        } catch {
+            Logger.log("Error getting public key: \(error.localizedDescription)", level: .error)
+            return nil
+        }
     }
     
     func deletePrivateKey() {
@@ -78,7 +83,12 @@ struct EncryptionManager {
     }
     
     func savePublicKey(_ publicKeyData: Data) -> P256.KeyAgreement.PublicKey? {
-        return try? P256.KeyAgreement.PublicKey(rawRepresentation: publicKeyData)
+        do {
+            return try P256.KeyAgreement.PublicKey(rawRepresentation: publicKeyData)
+        } catch {
+            Logger.log("Error saving key: \(error.localizedDescription)", level: .error)
+            return nil
+        }
     }
     
     func generateSharedSecret(peerPublicKeyString: String) -> SymmetricKey? {
@@ -131,6 +141,7 @@ struct EncryptionManager {
             let sealedBox = try AES.GCM.seal(data, using: symmetricKey)
             return sealedBox.combined
         } catch {
+            Logger.log("Error encrypting data: \(error.localizedDescription)", level: .error)
             return nil
         }
     }
@@ -145,6 +156,7 @@ struct EncryptionManager {
             let sealedBox = try AES.GCM.SealedBox(combined: encryptedData)
             return try AES.GCM.open(sealedBox, using: symmetricKey)
         } catch {
+            Logger.log("Error decrypting data: \(error.localizedDescription)", level: .error)
             return nil
         }
     }

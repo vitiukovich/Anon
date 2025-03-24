@@ -133,12 +133,9 @@ class MainViewModel {
     }
     
     func deleteChat(_ chat: ChatDTO, forEveryone: Bool) {
-        do {
-            try chatManager.deleteChat(chat, forEveryone: forEveryone)
-            DispatchQueue.main.async { [weak self] in
-                self?.fetchLocalChats()
-            }
-        } catch {
+        chatManager.deleteChat(chat, forEveryone: forEveryone)
+        DispatchQueue.main.async { [weak self] in
+            self?.fetchLocalChats()
         }
     }
     

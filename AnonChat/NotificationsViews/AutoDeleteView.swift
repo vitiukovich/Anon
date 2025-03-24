@@ -154,7 +154,9 @@ class AutoDeleteView: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             NetworkChatService.shared.sendDeleteTimerSignal(userID, deleteTime: selectedOption.index)
             do {
                 try LocalChatService.shared.updateDeleteTimer(for: userID, deleteTime: selectedOption.index)
-            } catch {}
+            } catch {
+                Logger.log("Error updating delete timer: \(error.localizedDescription)", level: .error)
+            }
             self.dismiss()
         }, for: .touchUpInside)
     }

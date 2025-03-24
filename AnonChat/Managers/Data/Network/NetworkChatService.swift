@@ -45,7 +45,7 @@ final class NetworkChatService {
                 do {
                     try LocalChatService.shared.updateDeleteTimer(for: senderID, deleteTime: deleteTime)
                 } catch {
-                    
+                    Logger.log("Error updating delete timer: \(error.localizedDescription)", level: .error)
                 }
                 
                 NotificationCenter.default.post(name: .newAutoDeleteTime, object: nil, userInfo: ["deleteTime": deleteTime])
@@ -75,9 +75,7 @@ final class NetworkChatService {
 
         chatRemovingHandle = chatRef.observe(.value) { (snapshot: DataSnapshot) in
             guard let contactID = snapshot.value as? String else { return }
-            do {
-                try ChatManager.shared.deleteMessagesFromChat(forContactID: contactID)
-            } catch {}
+            ChatManager.shared.deleteMessagesFromChat(forContactID: contactID)
             chatRef.removeValue()
         }
     }

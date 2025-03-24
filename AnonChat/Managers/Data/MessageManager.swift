@@ -16,7 +16,9 @@ final class MessageManager {
         do {
             try LocalMessageService.shared.deleteMessage(fromChat: chatID, messageDate: message.date)
             NetworkMessageService.shared.sendDeleteRequest(to: contactID, message: message)
-        } catch {}
+        } catch {
+            Logger.log("Error delete message: \(error.localizedDescription)", level: .error)
+        }
     }
     
     func sendMessage(to chat: Chat, message: Message, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -49,6 +51,7 @@ final class MessageManager {
                 
                 NotificationCenter.default.post(name: .newMessageReceived, object: nil, userInfo: ["message": message])
             } catch {
+                Logger.log("Error starting listening for messages: \(error.localizedDescription)", level: .error)
             }
         }
     }

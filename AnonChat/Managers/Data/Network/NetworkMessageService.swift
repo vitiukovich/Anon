@@ -109,6 +109,7 @@ final class NetworkMessageService {
                 try LocalMessageService.shared.deleteMessage(fromChat: "\(userID)_\(contactID)", messageDate: messageDate)
                 snapshot.ref.removeValue()
             } catch {
+                Logger.log("Error deleting message: \(error.localizedDescription)", level: .error)
             }
         }
     }

@@ -67,7 +67,9 @@ final class Chat: Object {
             try realm.write {
                 hasUnread = false
             }
-        } catch {}
+        } catch {
+            Logger.log("Mark is Read Error: \(error.localizedDescription)", level: .error)
+        }
     }
     
     func toDTO() -> ChatDTO {

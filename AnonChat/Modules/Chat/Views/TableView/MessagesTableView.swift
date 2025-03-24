@@ -41,11 +41,10 @@ class MessagesTableView: UITableView, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessagesCell", for: indexPath) as! MessagesTableViewCell
             cell.transform = CGAffineTransform(rotationAngle: .pi)
             cell.configure(message: message, imageTapHandler: { [weak self] image in
-                guard let self, let parentView = parentView else { return }
+                guard let parentView = parentView else { return }
                 parentView.showImage(image: image)
             }, deleteMessageHandler: { [weak self] message in
-                guard let self,
-                      let contactID = parentView?.userID,
+                guard let contactID = parentView?.userID,
                       let chatID = parentView?.chatID else { return }
                 MessageManager.shared.deleteMessage(message, fromChat: chatID, contactID: contactID)
                 
