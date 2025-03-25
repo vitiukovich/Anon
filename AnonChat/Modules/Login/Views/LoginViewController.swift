@@ -50,7 +50,7 @@ class LoginViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if !UserDefaults.standard.bool(forKey: "EULAAccepted") {
-            let EULAViewController = EULAViewController()
+            let EULAViewController = EULAViewController(isFirst: true)
             EULAViewController.modalPresentationStyle = .fullScreen
             present(EULAViewController, animated: true)
         }

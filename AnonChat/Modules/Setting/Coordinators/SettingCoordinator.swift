@@ -103,4 +103,10 @@ final class SettingCoordinator {
         })
         viewController.show(fromVC: vc)
     }
+    
+    func showEULA() {
+        let EULAViewController = EULAViewController(isFirst: false)
+        EULAViewController.modalPresentationStyle = .fullScreen
+        navigationController?.present(EULAViewController, animated: true)
+    }
 }

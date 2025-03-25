@@ -206,8 +206,10 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         case 4:
             cell.configure(title: "Contact Us", textColor: .rightValueTextField, isIcon: true)
         case 5:
-            cell.configure(title: "Delete All Data", textColor: .wrongValueTextField, isIcon: true)
+            cell.configure(title: "EULA", textColor: .rightValueTextField, isIcon: true)
         case 6:
+            cell.configure(title: "Delete All Data", textColor: .wrongValueTextField, isIcon: true)
+        case 7:
             cell.configure(title: "Delete Account", textColor: .wrongValueTextField, isIcon: true)
         default:
             break
@@ -226,11 +228,13 @@ class SettingViewController: UIViewController,  UITableViewDataSource, UITableVi
         case 4:
             coordinator.showContactUs(vc: self)
         case 5:
+            coordinator.showEULA()
+        case 6:
             coordinator.showClearDeviceConfirmation(vc: self, action: UIAction { [weak self] _ in
                 guard let self else { return }
                 viewModel.clearDeviceData()
             })
-        case 6:
+        case 7:
             coordinator.showDeleteAccountConfirmation(vc: self, action: UIAction { [weak self] _ in
                 guard let self else { return }
                 viewModel.deleteAccount()
