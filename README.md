@@ -1,14 +1,15 @@
 # 􀺧 AnonChat X  
 
 **AnonChat X** is an iOS application for **anonymous messaging**.  
-This project was created as part of my iOS development learning journey and utilizes **Swift, UIKit, Combine, Firebase, and Realm**.  
+This project was created as part of my iOS development learning journey and utilizes **Swift, UIKit, Combine, Firebase, and Realm**. 
+[[App Store Link|https://apps.apple.com/us/app/anonchat-x/id6742771196]]
 
 ---
 
 ## 􁕍    Features  
 
 ✔️ User authentication and registration (Firebase)  
-✔️ Send and receive anonymous messages (Firebace)
+✔️ Send and receive anonymous messages (Firebase)
 ✔️ Data encryption (CryptoKit)  
 ✔️ Local data storage (Realm)  
 ✔️ Custom UI built with UIKit  
@@ -83,7 +84,7 @@ Xcode should automatically resolve all dependencies, but if something is missing
 
     • Add files sender
     • Add themes
-    • Add groops 
+    • Add groups 
     • Add calls
 
 ---
