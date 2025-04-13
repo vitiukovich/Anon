@@ -1,6 +1,7 @@
 # 􀺧 AnonChat X  
 
 **AnonChat X** is an iOS application for **anonymous messaging**.  [App Store](https://apps.apple.com/us/app/anonchat-x/id6742771196)
+
 This project was created as part of my iOS development learning journey and utilizes **Swift, UIKit, Combine, Firebase, and Realm**. 
 
 ---
